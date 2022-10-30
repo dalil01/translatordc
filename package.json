@@ -1,0 +1,37 @@
+{
+  "name": "translatordc",
+  "version": "1.0.0",
+  "description": "Translation generation tool for web applications.",
+  "main": "lib/main.js",
+  "bin": {
+    "translatordc": "bin/translatordc"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "gui": "npx electron lib/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalil01/translatordc.git"
+  },
+  "keywords": [
+    "translation",
+    "translator",
+    "translate"
+  ],
+  "author": "Dalil CHABLIS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dalil01/translatordc/issues"
+  },
+  "homepage": "https://github.com/dalil01/translatordc#readme",
+  "dependencies": {
+    "commander": "^9.4.1"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/node": "^18.11.7",
+    "typescript": "^4.8.4"
+  }
+}

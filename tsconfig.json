@@ -1,0 +1,22 @@
+{
+  "include": ["./src/**/*"],
+  "compileOnSave": true,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "module": "ESNext",
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
+    "target": "ES5",
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "noEmitOnError": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "dist"]
+}
