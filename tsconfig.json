@@ -2,21 +2,23 @@
   "include": ["./src/**/*"],
   "compileOnSave": true,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "outDir": "./dist",
     "sourceMap": true,
     "strict": true,
     "noImplicitAny": false,
-    "module": "ESNext",
+    "module": "CommonJS",
     "lib": [
       "ESNext",
       "dom"
     ],
-    "target": "ES5",
-    "moduleResolution": "Node",
+    "target": "es6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "noEmitOnError": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+	"allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "dist"]
 }

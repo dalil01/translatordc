@@ -1,3 +1,4 @@
-import {CLI} from "./cli/CLI";
+import {CLI} from "./cli/cli";
 
-CLI.run(process.argv);
+const cli = new CLI();
+cli.run();

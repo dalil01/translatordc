@@ -2,13 +2,14 @@
   "name": "translatordc",
   "version": "1.0.0",
   "description": "Translation generation tool for web applications.",
-  "main": "lib/main.js",
+  "main": "dist/main.js",
   "bin": {
     "translatordc": "bin/translatordc"
   },
   "scripts": {
     "build": "npx tsc",
-    "gui": "npx electron lib/index.js",
+    "start": "npx ts-node src/main.ts",
+    "gui": "npx electron dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,7 +28,8 @@
   },
   "homepage": "https://github.com/dalil01/translatordc#readme",
   "dependencies": {
-    "commander": "^9.4.1"
+    "commander": "^9.4.1",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
