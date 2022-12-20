@@ -1,39 +1,31 @@
 import * as commander from "commander";
 import * as packageJson from "../../package.json";
+import { Runner } from "../core/runner/runner";
+import { CommandType } from "../core/types/command.type";
+import { DefaultConfig } from "../core/constants/default-config";
 
 export class CLI {
 	
-	private readonly name: string;
-	private readonly version: string;
-	private readonly configFileNames: string[];
-	
-	private readonly command: commander.Command;
+	private readonly name: string = packageJson.name;
+	private readonly version: string = packageJson.version;
+	private readonly command: commander.Command = new commander.Command();
+	private readonly runner: Runner = new Runner();
 	
 	constructor() {
-		this.name = packageJson.name;
-		this.version = packageJson.version;
-		this.configFileNames = [
-			this.name + ".config.json",
-			this.name + ".config.js",
-			this.name + ".config.ts"
-		];
-		this.command = new commander.Command();
 		this.autoSetOptions();
 	}
 	
 	public run(): void {
 		const opts = this.command.opts();
 		
-		console.log(opts);
+		// console.log(opts);
 		
 		if (opts.version) {
 			console.log(this.version);
-		} else if (this.command.help()) {
+		} else if (opts.help) {
 			this.command.outputHelp();
 		} else {
-			if (opts.configFile) {
-			
-			}
+			this.runner.run(opts as CommandType);
 		}
 	}
 	
@@ -42,7 +34,10 @@ export class CLI {
 			.name(this.name)
 			.usage("[options]")
 			.option("-v, --version", "Display a current version")
-			.option("-cf, --config-file <value>", "Custom config file path (Default: " + this.configFileNames.join(" | ") + ")")
+			.option("-cf, --config-file <value>", "Custom config file path (Default: " + DefaultConfig.defaultFileNames.join(" | ") + ")")
+			.option("-if, --input-file <value>", "")
+			.option("-od, --output-dir <value>", "")
+			.option("-f, --force", "Force execution")
 			.option("-h, --help", "Display help")
 			.parse(process.argv)
 		;

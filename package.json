@@ -28,7 +28,10 @@
   },
   "homepage": "https://github.com/dalil01/translatordc#readme",
   "dependencies": {
+    "cli-color": "^2.0.3",
     "commander": "^9.4.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
