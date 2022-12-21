@@ -35,7 +35,7 @@ export class CLI {
 			.usage("[options]")
 			.option("-v, --version", "Display a current version")
 			.option("-cf, --config-file <value>", "Custom config file path (Default: " + DefaultConfig.defaultFileNames.join(" | ") + ")")
-			.option("-if, --input-file <value>", "")
+			.option("-tkf, --translation-keys-file <value>", "")
 			.option("-od, --output-dir <value>", "")
 			.option("-f, --force", "Force execution")
 			.option("-h, --help", "Display help")

@@ -1,4 +1,4 @@
 {
-  "inputFile": "../inputs/input2.js",
-  "outputDir": "../outputs"
+  "inputFile": "../../inputs/input2.js",
+  "outputDir": "../../outputs"
 }
