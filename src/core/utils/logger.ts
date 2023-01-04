@@ -3,7 +3,8 @@ const clc = require("cli-color");
 enum LoggerType {
 	INFO= "INFO",
 	WARNING = "WARNING",
-	ERROR = "ERROR"
+	ERROR = "ERROR",
+	SUCCESS = "SUCCESS"
 }
 
 export class Logger {
@@ -19,6 +20,10 @@ export class Logger {
 	public static error(message: string) {
 		this.printLog(LoggerType.ERROR, message);
 	}
+
+	public static success(message: string) {
+		this.printLog(LoggerType.SUCCESS, message);
+	}
 	
 	private static printLog(type: LoggerType, message: string): void {
 		let logMessage;
@@ -32,6 +37,9 @@ export class Logger {
 				break;
 			case LoggerType.ERROR:
 				logMessage = clc.red(`[${LoggerType.ERROR}] ` + message);
+				break;
+			case LoggerType.SUCCESS:
+				logMessage = clc.green(`[${LoggerType.SUCCESS}] ` + message);
 				break;
 		}
 		

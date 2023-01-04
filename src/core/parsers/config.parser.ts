@@ -3,18 +3,18 @@ import * as fs from "fs";
 import path from "node:path";
 import { Logger } from "../utils/logger";
 import { ParsedConfigType } from "../types/parsed-config.type";
+import {Language} from "../constants/language";
+import {OutputFileExtensions} from "../constants/output-file-extensions";
 
 export class ConfigParser {
 
 	public parse(config: ConfigType): ParsedConfigType | null {
-		console.log(config);
-		
-		if (!config.translationKeysFile || !fs.existsSync(path.resolve(config.translationKeysFile))) {
+		if (!config.inputFile || !fs.existsSync(path.resolve(config.inputFile))) {
 			Logger.error("Input file not found.");
 			return null;
 		}
-		
-		const translationKeys = this.findTranslationKeys(path.resolve(config.translationKeysFile));
+
+		const translationKeys = this.findTranslationKeys(path.resolve(config.inputFile));
 		if (!translationKeys) {
 			Logger.error("The content of your translation keys file is not in expected format.");
 			return null;
@@ -23,11 +23,32 @@ export class ConfigParser {
 		if (translationKeys.length === 0) {
 			return null;
 		}
-		
-		console.log(translationKeys);
-		
+
+		if (!config.sourceLanguage || !this.isValidLanguages([config.sourceLanguage])) {
+			Logger.error("Invalid source language.");
+			return null;
+		}
+
+		if (!config.targetLanguages || !this.isValidLanguages(config.targetLanguages)) {
+			Logger.error("Invalid target Languages.");
+			return null;
+		}
+
+		if (config.targetLanguages.length === 0) {
+			return null;
+		}
+
+		if (!config.outputFile || !this.isValidOutputFile(config.outputFile)) {
+			Logger.error("Invalid output file.");
+			return null;
+		}
+
 		return {
-			translationKeys
+			translationKeys,
+			inputFile: path.resolve(config.inputFile),
+			sourceLanguage: config.sourceLanguage,
+			targetLanguages: config.targetLanguages,
+			outputFile: path.resolve(config.outputFile)
 		};
 	}
 	
@@ -50,5 +71,30 @@ export class ConfigParser {
 		
 		return keys;
 	}
-	
+
+	private isValidLanguages(languages: Language[] | string[]): boolean {
+		let valid = true;
+
+		const validLanguages = Object.values(Language);
+		for (let i = 0; i < languages.length; i++) {
+			valid = validLanguages.includes(languages[i] as Language);
+		}
+
+		return valid;
+	}
+
+	private isValidOutputFile(file): boolean {
+		let valid = false;
+
+		const validExtensions = Object.values(OutputFileExtensions);
+		for (let i = 0; i < validExtensions.length; i++) {
+			if (file.endsWith(validExtensions[i])) {
+				valid = true;
+				break;
+			}
+		}
+
+		return valid;
+	}
+
 }
