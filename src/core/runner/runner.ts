@@ -22,7 +22,6 @@ export class Runner {
 		}
 
 		this.outputFileGenerator.generate(parsedConfig);
-		
 	}
 	
 	

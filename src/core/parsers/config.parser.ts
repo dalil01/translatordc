@@ -48,7 +48,8 @@ export class ConfigParser {
 			inputFile: path.resolve(config.inputFile),
 			sourceLanguage: config.sourceLanguage,
 			targetLanguages: config.targetLanguages,
-			outputFile: path.resolve(config.outputFile)
+			outputFile: path.resolve(config.outputFile),
+			singleQuote: config.singleQuote
 		};
 	}
 	

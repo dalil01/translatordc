@@ -6,3 +6,6 @@ node_modules
 
 # Build
 dist
+
+# src
+src/core/generators/backup

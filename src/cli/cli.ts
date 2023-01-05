@@ -37,6 +37,8 @@ export class CLI {
 			.option("-cf, --config-file <value>", "Custom config file path (Default: " + DefaultConfig.defaultFileNames.join(" | ") + ")")
 			.option("-tkf, --translation-keys-file <value>", "")
 			.option("-of, --output-file <value>", "")
+			.option("-sq, --single-quote <value>", "")
+			.option("-rof, --restore-output-file <value>", "")
 			.option("-f, --force", "Force execution")
 			.option("-h, --help", "Display help")
 			.parse(process.argv)
