@@ -6,8 +6,8 @@ module.exports = {
     targetLanguages: [Language.English, 'es'],
     outputOptions: {
         dir: "../../outputs",
-        multipleFiles: true,
-        //fileOptions: { name: "output.ts" },
+        multipleFiles: false,
+        fileOptions: [{ lang: "en", name: "output.ts" }],
     },
 
 

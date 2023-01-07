@@ -4,42 +4,19 @@ import {Logger} from "../utils/logger";
 import * as path from "path";
 import {OutputFileExtensions} from "../constants/output-file-extensions";
 import * as fs from "fs";
+import {Language} from "../constants/language";
+import {ParsedOutputOptionsType} from "../types/parsed-output-options.type";
 
 export class OutputFileGenerator {
 
     public generate(config: ParsedConfigType): void {
         console.log(config);
 
-        if (this.nothingChanges()) {
-            Logger.info("Nothing changes");
-            return;
-        }
-
         const outputOptions = config.outputOptions;
-        const fileOptions = outputOptions.fileOptions;
-        const filenames: string[] = [];
+        const filenameByLang: Map<string, string> = this.findFilenameByLang(outputOptions, config.languages);
+        const generatedFiles: Set<string> = new Set();
 
-        if (Array.isArray(fileOptions)) {
-            for (let i = 0; i < fileOptions.length; i++) {
-                filenames.push(fileOptions[i].name);
-            }
-        } else {
-            if (outputOptions.multipleFiles) {
-                for (let i = 0; i < config.languages.length; i++) {
-                    filenames.push(config.languages[i] + '.' + fileOptions.name)
-                }
-            } else {
-                filenames.push(fileOptions.name);
-            }
-        }
-
-        console.log(filenames);
-
-        const quote = (outputOptions.singleQuote) ? "'" : '\"';
-
-        for (let i = 0; i < filenames.length; i++) {
-            const filename = filenames[i];
-
+        for (const [lang, filename] of filenameByLang) {
             let content = '';
 
             if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
@@ -48,61 +25,91 @@ export class OutputFileGenerator {
                 content += '{';
             }
 
+            content += "\n";
+            for (let i = 0; i < config.translationKeys.length; i++) {
+                content += "\t" + config.translationKeys.at(i) + ": {\n";
 
-            content += '}';
+                /*
+                for (let j = 0; j < config.languages.length; j++) {
+                    content += "\t".repeat(2) + config.languages.at(j) + ": \"";
 
-            this.generateOutputFile(outputOptions.dir + filename, content);
+                    //
 
-            const savedDir = path.dirname(__filename) + "/saved";
-            if (fs.existsSync(savedDir)) {
-                fs.rm(savedDir,  { recursive: true, force: true }, () => {});
-            }
+                    content += "\"";
 
-            this.generateOutputFile(savedDir + '/' + filename, content, false);
-        }
+                    if (j < config.languages.length -1) {
+                        content += ',';
+                    }
 
+                    content += "\n";
+                }
 
+                 */
 
-        /*
+                content += "\t}";
 
-        content += "\n";
-        for (let i = 0; i < config.translationKeys.length; i++) {
-            content += "\t" + config.translationKeys.at(i) + ": {\n";
-
-            for (let j = 0; j < languages.length; j++) {
-                content += "\t".repeat(2) + languages.at(j) + ": " + quote;
-
-
-                content += quote;
-
-                if (j < languages.length -1) {
+                if (i < config.translationKeys.length -1) {
                     content += ',';
                 }
+
                 content += "\n";
             }
 
-            content += "\t}";
+            content += '}';
 
-            if (i < config.translationKeys.length -1) {
-                content += ',';
+            this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
+
+            const savedDir = path.dirname(__filename) + "/saved";
+            if (fs.existsSync(savedDir)) {
+                fs.rmSync(savedDir,  { recursive: true, force: true });
             }
 
-            content += "\n";
+            this.generateOutputFile(savedDir + '/' + filename, content, false);
+
+            generatedFiles.add(filename);
+        }
+    }
+
+    private findFilenameByLang(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string> {
+        const fileOptions = outputOptions.fileOptions;
+        const filenameByLanguage: Map<string, string> = new Map();
+
+        if (Array.isArray(fileOptions)) {
+            const languagesCustom: Language[] | string[] = [];
+            for (let i = 0; i < fileOptions.length; i++) {
+                languagesCustom.push(fileOptions[i].lang);
+            }
+
+            for (let i = 0; i < languages.length; i++) {
+                const language: any = languages[i];
+                if (!languagesCustom.includes(language)) {
+                    filenameByLanguage.set(language, outputOptions.defaultFilename);
+                }
+            }
+
+            for (let i = 0; i < fileOptions.length; i++) {
+                filenameByLanguage.set(fileOptions[i].lang, fileOptions[i].name);
+            }
+        } else {
+            if (outputOptions.multipleFiles) {
+                for (let i = 0; i < languages.length; i++) {
+                    filenameByLanguage.set(languages[i], languages[i] + '.' + fileOptions.name);
+                }
+            } else {
+                filenameByLanguage.set("*", fileOptions.name);
+            }
         }
 
+        console.log(filenameByLanguage);
 
-         */
+        return filenameByLanguage;
     }
 
-    private nothingChanges(): boolean {
-        return false;
-    }
-
-    private generateOutputFile(filePath: string, content, log: boolean = true) {
+    private generateOutputFile(filePath: string, content, log: boolean = true): void {
         fse.outputFile(filePath, content)
             .then(() => {
                 if (log) {
-                    Logger.success("Generated : " + filePath);
+                    Logger.success("Generated: " + filePath);
                 }
             })
             .catch(err => {

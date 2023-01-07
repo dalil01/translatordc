@@ -67,7 +67,8 @@ export class ConfigParser {
 
 		const outputOptions = config.outputOptions;
 
-		let fileOptions: any = { name: DefaultConfig.outputOptions.name + '.' + config.inputFile.split('.').at(-1) };
+		const defaultFilename = DefaultConfig.outputOptions.name + '.' + config.inputFile.split('.').at(-1);
+		let fileOptions: any = { name: defaultFilename };
 
 		if (outputOptions.hasOwnProperty("fileOptions")) {
 			let validFile = true;
@@ -77,7 +78,7 @@ export class ConfigParser {
 			} else if (Array.isArray(outputOptions.fileOptions)) {
 				for (let i = 0; i < outputOptions.fileOptions.length; i++) {
 					const obj = outputOptions.fileOptions[0];
-					if (!obj.lang || !obj.name || !this.isValidLanguages([obj.lang]) || !this.isValidOutputFile(obj.name)) {
+					if (!obj.lang || !obj.name || !this.isValidLanguages([obj.lang]) || !this.isValidOutputFile(obj.name) || ![config.sourceLanguage, ...config.targetLanguages].includes(obj.lang)) {
 						validFile = false;
 						break;
 					}
@@ -101,18 +102,18 @@ export class ConfigParser {
 				inputFileSplit.pop();
 				dir = inputFileSplit.join('/');
 			} else {
-				dir = DefaultConfig.outputOptions.dir
+				dir = DefaultConfig.outputOptions.dir;
 			}
 
 			dir = path.resolve(dir);
-			dir += (dir?.at(-1) != '/' ? '/' : '')
+			dir += (dir?.at(-1) != '/' ? '/' : '');
 		}
 
 		return {
 			dir,
 			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") && outputOptions.multipleFiles ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
-			fileOptions,
-			singleQuote: outputOptions.hasOwnProperty("singleQuote") && outputOptions.singleQuote ? outputOptions.singleQuote : DefaultConfig.outputOptions.singleQuote
+			defaultFilename,
+			fileOptions
 		};
 	}
 
