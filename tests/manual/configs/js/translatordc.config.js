@@ -7,7 +7,7 @@ module.exports = {
     outputOptions: {
         dir: "../../outputs",
         multipleFiles: false,
-        fileOptions: [{ lang: "en", name: "output.ts" }],
+        fileOptions: { name: "output.ts" } //[{ lang: "en", name: "output.ts" }],
     },
 
 

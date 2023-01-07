@@ -70,6 +70,12 @@ export class ConfigParser {
 		const defaultFilename = DefaultConfig.outputOptions.name + '.' + config.inputFile.split('.').at(-1);
 		let fileOptions: any = { name: defaultFilename };
 
+		const invalidFileOptionsMsg = "Invalid output file options."
+		if (typeof outputOptions.fileOptions != "object") {
+			Logger.error(invalidFileOptionsMsg);
+			return null;
+		}
+
 		if (outputOptions.hasOwnProperty("fileOptions")) {
 			let validFile = true;
 
@@ -86,7 +92,7 @@ export class ConfigParser {
 			}
 
 			if (!validFile) {
-				Logger.error("Invalid output file options.");
+				Logger.error(invalidFileOptionsMsg);
 				return null;
 			} else {
 				fileOptions = outputOptions.fileOptions;

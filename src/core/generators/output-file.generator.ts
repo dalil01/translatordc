@@ -96,7 +96,9 @@ export class OutputFileGenerator {
                     filenameByLanguage.set(languages[i], languages[i] + '.' + fileOptions.name);
                 }
             } else {
-                filenameByLanguage.set("*", fileOptions.name);
+                for (let i = 0; i < languages.length; i++) {
+                    filenameByLanguage.set(languages[i], fileOptions.name);
+                }
             }
         }
 
