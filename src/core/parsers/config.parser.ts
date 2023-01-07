@@ -67,7 +67,7 @@ export class ConfigParser {
 
 		const outputOptions = config.outputOptions;
 
-		let fileOptions = { name: DefaultConfig.outputOptions.name };
+		let fileOptions: any = { name: DefaultConfig.outputOptions.name + '.' + config.inputFile.split('.').at(-1) };
 
 		if (outputOptions.hasOwnProperty("fileOptions")) {
 			let validFile = true;
@@ -87,6 +87,8 @@ export class ConfigParser {
 			if (!validFile) {
 				Logger.error("Invalid output file options.");
 				return null;
+			} else {
+				fileOptions = outputOptions.fileOptions;
 			}
 		}
 
@@ -97,18 +99,20 @@ export class ConfigParser {
 			if (config.inputFile.includes('/')) {
 				const inputFileSplit = config.inputFile.split('/');
 				inputFileSplit.pop();
-				inputFileSplit.join('');
+				dir = inputFileSplit.join('/');
 			} else {
 				dir = DefaultConfig.outputOptions.dir
 			}
 
-			dir += (outputOptions.dir?.at(-1) != '/' ? '/' : '');
+			dir = path.resolve(dir);
+			dir += (dir?.at(-1) != '/' ? '/' : '')
 		}
 
 		return {
 			dir,
-			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
-			fileOptions
+			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") && outputOptions.multipleFiles ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
+			fileOptions,
+			singleQuote: outputOptions.hasOwnProperty("singleQuote") && outputOptions.singleQuote ? outputOptions.singleQuote : DefaultConfig.outputOptions.singleQuote
 		};
 	}
 

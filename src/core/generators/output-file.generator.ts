@@ -1,8 +1,9 @@
 import {ParsedConfigType} from "../types/parsed-config.type";
 import * as fse from "fs-extra";
 import {Logger} from "../utils/logger";
-import {OutputFileExtensions} from "../constants/output-file-extensions";
 import * as path from "path";
+import {OutputFileExtensions} from "../constants/output-file-extensions";
+import * as fs from "fs";
 
 export class OutputFileGenerator {
 
@@ -15,22 +16,54 @@ export class OutputFileGenerator {
         }
 
         const outputOptions = config.outputOptions;
-        const quote = (outputOptions.hasOwnProperty("singleQuote") && outputOptions.singleQuote?.toLowerCase() === "true" || !config.hasOwnProperty("singleQuote") && outputOptions) ? "'" : '\"';
-        const contentByFileName = new Map<string, string>();
+        const fileOptions = outputOptions.fileOptions;
+        const filenames: string[] = [];
 
-        if (Array.isArray(outputOptions.file)) {
-            for (let i = 0; i < outputOptions.file.length; i++) {
-                const obj = outputOptions.file[i];
-                contentByFileName.set(obj);
+        if (Array.isArray(fileOptions)) {
+            for (let i = 0; i < fileOptions.length; i++) {
+                filenames.push(fileOptions[i].name);
+            }
+        } else {
+            if (outputOptions.multipleFiles) {
+                for (let i = 0; i < config.languages.length; i++) {
+                    filenames.push(config.languages[i] + '.' + fileOptions.name)
+                }
+            } else {
+                filenames.push(fileOptions.name);
             }
         }
 
-        /*
-        if (outputOptions.endsWith(OutputFileExtensions.TS) || config.outputFile.endsWith(OutputFileExtensions.JS)) {
-            content += "export const " + config.outputFile.split('/').at(-1)?.split('.').at(0) + " = {";
-        } else if (config.outputFile.endsWith(OutputFileExtensions.JSON)) {
-            content += '{';
+        console.log(filenames);
+
+        const quote = (outputOptions.singleQuote) ? "'" : '\"';
+
+        for (let i = 0; i < filenames.length; i++) {
+            const filename = filenames[i];
+
+            let content = '';
+
+            if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
+                content += "export const " + filename.split('/').at(-1)?.split('.').at(0) + " = {";
+            } else if (filename.endsWith(OutputFileExtensions.JSON)) {
+                content += '{';
+            }
+
+
+            content += '}';
+
+            this.generateOutputFile(outputOptions.dir + filename, content);
+
+            const savedDir = path.dirname(__filename) + "/saved";
+            if (fs.existsSync(savedDir)) {
+                fs.rm(savedDir,  { recursive: true, force: true }, () => {});
+            }
+
+            this.generateOutputFile(savedDir + '/' + filename, content, false);
         }
+
+
+
+        /*
 
         content += "\n";
         for (let i = 0; i < config.translationKeys.length; i++) {
@@ -57,12 +90,8 @@ export class OutputFileGenerator {
             content += "\n";
         }
 
-        content += '}';
 
          */
-
-        this.generateOutputFile(outputOptions.dir + filename, content);
-        this.generateOutputFile(path.dirname(__filename) + "/output-file.saved.txt", content, false);
     }
 
     private nothingChanges(): boolean {
@@ -73,7 +102,7 @@ export class OutputFileGenerator {
         fse.outputFile(filePath, content)
             .then(() => {
                 if (log) {
-                    Logger.success("Generated!");
+                    Logger.success("Generated : " + filePath);
                 }
             })
             .catch(err => {
