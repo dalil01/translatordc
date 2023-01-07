@@ -8,4 +8,4 @@ node_modules
 dist
 
 # src
-src/core/generators/backup
+src/core/generators/output-file.saved.txt

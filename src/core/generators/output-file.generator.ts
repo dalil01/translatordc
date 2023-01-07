@@ -14,13 +14,19 @@ export class OutputFileGenerator {
             return;
         }
 
-        const languages = [config.sourceLanguage, ...config.targetLanguages];
-        // TODO c'est le parser qui doit gérer v
-        const quote = (config.hasOwnProperty("singleQuote") && config.singleQuote?.toLowerCase() === "true" || !config.hasOwnProperty("singleQuote") && config.singleQuote) ? "'" : '\"';
-        let content = '';
+        const outputOptions = config.outputOptions;
+        const quote = (outputOptions.hasOwnProperty("singleQuote") && outputOptions.singleQuote?.toLowerCase() === "true" || !config.hasOwnProperty("singleQuote") && outputOptions) ? "'" : '\"';
+        const contentByFileName = new Map<string, string>();
 
-        // TODO c'est le parser qui doit gérer v
-        if (config.outputFile.endsWith(OutputFileExtensions.TS) || config.outputFile.endsWith(OutputFileExtensions.JS)) {
+        if (Array.isArray(outputOptions.file)) {
+            for (let i = 0; i < outputOptions.file.length; i++) {
+                const obj = outputOptions.file[i];
+                contentByFileName.set(obj);
+            }
+        }
+
+        /*
+        if (outputOptions.endsWith(OutputFileExtensions.TS) || config.outputFile.endsWith(OutputFileExtensions.JS)) {
             content += "export const " + config.outputFile.split('/').at(-1)?.split('.').at(0) + " = {";
         } else if (config.outputFile.endsWith(OutputFileExtensions.JSON)) {
             content += '{';
@@ -53,8 +59,10 @@ export class OutputFileGenerator {
 
         content += '}';
 
-        this.generateOutputFile(config.outputFile, content);
-        this.generateOutputFile(path.dirname(__filename) + "/backup/output", content, false);
+         */
+
+        this.generateOutputFile(outputOptions.dir + filename, content);
+        this.generateOutputFile(path.dirname(__filename) + "/output-file.saved.txt", content, false);
     }
 
     private nothingChanges(): boolean {

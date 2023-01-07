@@ -5,6 +5,9 @@ import { Logger } from "../utils/logger";
 import { ParsedConfigType } from "../types/parsed-config.type";
 import {Language} from "../constants/language";
 import {OutputFileExtensions} from "../constants/output-file-extensions";
+import {OutputOptionsType} from "../types/output-options.type";
+import {ParsedOutputOptionsType} from "../types/parsed-output-options.type";
+import {DefaultConfig} from "../constants/default-config";
 
 export class ConfigParser {
 
@@ -38,8 +41,12 @@ export class ConfigParser {
 			return null;
 		}
 
-		if (!config.outputFile || !this.isValidOutputFile(config.outputFile)) {
-			Logger.error("Invalid output file.");
+		if (!config.outputOptions) {
+			return null;
+		}
+
+		const parsedOutputOptions = this.parseOutputOptions(config);
+		if (!parsedOutputOptions) {
 			return null;
 		}
 
@@ -48,28 +55,80 @@ export class ConfigParser {
 			inputFile: path.resolve(config.inputFile),
 			sourceLanguage: config.sourceLanguage,
 			targetLanguages: config.targetLanguages,
-			outputFile: path.resolve(config.outputFile),
-			singleQuote: config.singleQuote
+			languages: [config.sourceLanguage, ...config.targetLanguages],
+			outputOptions: parsedOutputOptions
 		};
 	}
-	
+
+	private parseOutputOptions(config: ConfigType): ParsedOutputOptionsType | null {
+		if (!config.outputOptions) {
+			return null;
+		}
+
+		const outputOptions = config.outputOptions;
+
+		let fileOptions = { name: DefaultConfig.outputOptions.name };
+
+		if (outputOptions.hasOwnProperty("fileOptions")) {
+			let validFile = true;
+
+			if (!outputOptions.fileOptions || (!Array.isArray(outputOptions.fileOptions) && !this.isValidOutputFile(outputOptions.fileOptions.name))) {
+				validFile = false;
+			} else if (Array.isArray(outputOptions.fileOptions)) {
+				for (let i = 0; i < outputOptions.fileOptions.length; i++) {
+					const obj = outputOptions.fileOptions[0];
+					if (!obj.lang || !obj.name || !this.isValidLanguages([obj.lang]) || !this.isValidOutputFile(obj.name)) {
+						validFile = false;
+						break;
+					}
+				}
+			}
+
+			if (!validFile) {
+				Logger.error("Invalid output file options.");
+				return null;
+			}
+		}
+
+		let dir;
+		if (outputOptions.hasOwnProperty("fileOptions")) {
+			dir = outputOptions.dir + (outputOptions.dir?.at(-1) != '/' ? '/' : '');
+		} else {
+			if (config.inputFile.includes('/')) {
+				const inputFileSplit = config.inputFile.split('/');
+				inputFileSplit.pop();
+				inputFileSplit.join('');
+			} else {
+				dir = DefaultConfig.outputOptions.dir
+			}
+
+			dir += (outputOptions.dir?.at(-1) != '/' ? '/' : '');
+		}
+
+		return {
+			dir,
+			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
+			fileOptions
+		};
+	}
+
 	private findTranslationKeys(filePath: string): string[] | null {
 		const inputFileStr = fs.readFileSync(filePath, "utf8").toString().trim();
-		
+
 		if (inputFileStr.length === 0 || !inputFileStr.includes('{') && inputFileStr.at(-1) !== '}') {
 			return null;
 		}
-		
+
 		const keys: string[] = [];
 		const values = inputFileStr.substring(inputFileStr.indexOf('{') + 1, inputFileStr.indexOf('}')).split(',');
-		
+
 		for (const value of values) {
 			const key = value.split(/:|=/)[0].trim();
 			if (key.length > 0) {
 				keys.push(key);
 			}
 		}
-		
+
 		return keys;
 	}
 
@@ -84,12 +143,12 @@ export class ConfigParser {
 		return valid;
 	}
 
-	private isValidOutputFile(file): boolean {
+	private isValidOutputFile(filename): boolean {
 		let valid = false;
 
 		const validExtensions = Object.values(OutputFileExtensions);
 		for (let i = 0; i < validExtensions.length; i++) {
-			if (file.endsWith(validExtensions[i])) {
+			if (filename.endsWith(validExtensions[i])) {
 				valid = true;
 				break;
 			}

@@ -1,4 +1,4 @@
-# translatordc
+ # translatordc
 
 
 
@@ -24,7 +24,7 @@ Options:
 By  default, `translatordc` will look for one of following files in the working directory:
 
 ```
-translatordc.config.js | translatordc.config.ts | translatordc.config.json
+translatordc.config.js | translatordc.config.json
 ```
 
 Here's an example `translatordc.config.js`:
