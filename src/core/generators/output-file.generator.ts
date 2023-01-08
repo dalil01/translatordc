@@ -16,31 +16,52 @@ export class OutputFileGenerator {
         const outputOptions = config.outputOptions;
         const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
         const generatedFiles: Set<string> = new Set();
+        const savedOutputFile = path.dirname(__filename) + "/saved-output.json";
+
+        if (fs.existsSync(savedOutputFile)) {
+            const lastSavedOutput = require(savedOutputFile);
+            //console.log(lastSavedOutput["key1"]);
+        }
+
+        // TODO : get all existed data.
+        let currentOutput = '';
+        for (const [filename, languages] of languagesByFilename) {
+            const currentOutputPath = path.resolve(outputOptions.dir + filename);
+            if (fs.existsSync(currentOutputPath)) {
+                console.log(require(currentOutputPath));
+            }
+        }
 
         for (const [filename, languages] of languagesByFilename) {
+
+            //const currentValueByLanguageByKey = this.findValueByLanguageByKey();
+
+            const isJSON = filename.endsWith(OutputFileExtensions.JSON);
+
             let content = '';
 
             if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
                 content += "export const " + filename.split('/').at(-1)?.split('.').at(0) + " = {";
-            } else if (filename.endsWith(OutputFileExtensions.JSON)) {
+            } else if (isJSON) {
                 content += '{';
             }
 
             content += "\n";
+
             for (let i = 0; i < config.translationKeys.length; i++) {
-                content += "\t" + config.translationKeys.at(i) + ": ";
+                content += "\t" + (isJSON ? "\"" : '') + config.translationKeys.at(i) + (isJSON ? "\"" : '') + ": ";
 
                 if (languages.length > 1) {
                     content += "{\n";
 
                     for (let j = 0; j < languages.length; j++) {
-                        content += "\t".repeat(2) + languages.at(j) + ": \"";
+                        content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j) + (isJSON ? "\"" : '') + ": \"";
 
 
                         content += "\"";
 
                         if (j < languages.length -1) {
-                            content += ',\n';
+                            content += ",\n";
                         }
                     }
 
@@ -61,16 +82,34 @@ export class OutputFileGenerator {
             content += '}';
 
             this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
-
-            const savedDir = path.dirname(__filename) + "/saved";
-            if (fs.existsSync(savedDir)) {
-                fs.rmSync(savedDir,  { recursive: true, force: true });
-            }
-
-            this.generateOutputFile(savedDir + '/' + filename, content, false);
-
             generatedFiles.add(filename);
         }
+
+        let saved = '{';
+
+        for (let i = 0; i < config.translationKeys.length; i++) {
+            saved += "\"" + config.translationKeys.at(i) + "\":{";
+
+            for (let j = 0; j < config.languages.length; j++) {
+                saved += "\"" + config.languages[j] + "\":\"";
+
+                saved += "\"";
+
+                if (j < config.languages.length -1) {
+                    saved += ',';
+                }
+            }
+
+            saved += '}'
+
+            if (i < config.translationKeys.length -1) {
+                saved += ',';
+            }
+        }
+
+        saved += '}';
+
+        this.generateOutputFile(savedOutputFile, saved, false);
     }
 
     private findLanguagesByFilename(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string[]> {
