@@ -6,6 +6,7 @@ import {OutputFileExtensions} from "../constants/output-file-extensions";
 import * as fs from "fs";
 import {Language} from "../constants/language";
 import {ParsedOutputOptionsType} from "../types/parsed-output-options.type";
+import * as dgram from "dgram";
 
 export class OutputFileGenerator {
 
@@ -13,10 +14,10 @@ export class OutputFileGenerator {
         console.log(config);
 
         const outputOptions = config.outputOptions;
-        const filenameByLang: Map<string, string> = this.findFilenameByLang(outputOptions, config.languages);
+        const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
         const generatedFiles: Set<string> = new Set();
 
-        for (const [lang, filename] of filenameByLang) {
+        for (const [filename, languages] of languagesByFilename) {
             let content = '';
 
             if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
@@ -27,7 +28,7 @@ export class OutputFileGenerator {
 
             content += "\n";
             for (let i = 0; i < config.translationKeys.length; i++) {
-                content += "\t" + config.translationKeys.at(i) + ": {\n";
+                content += "\t" + config.translationKeys.at(i) + ": " + ((languages.length > 1) ? "\"" : "{\n");
 
                 /*
                 for (let j = 0; j < config.languages.length; j++) {
@@ -46,7 +47,7 @@ export class OutputFileGenerator {
 
                  */
 
-                content += "\t}";
+                content += "\t" + ((languages.length > 1) ? "\"" : "}");
 
                 if (i < config.translationKeys.length -1) {
                     content += ',';
@@ -70,7 +71,7 @@ export class OutputFileGenerator {
         }
     }
 
-    private findFilenameByLang(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string> {
+    private findLanguagesByFilename(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string[]> {
         const fileOptions = outputOptions.fileOptions;
         const filenameByLanguage: Map<string, string> = new Map();
 
@@ -102,9 +103,18 @@ export class OutputFileGenerator {
             }
         }
 
-        console.log(filenameByLanguage);
+        const languagesByFilename: Map<string, string[]> = new Map();
+        for (const [, filename] of filenameByLanguage) {
+            languagesByFilename.set(filename, []);
+        }
 
-        return filenameByLanguage;
+        for (const [lang, filename] of filenameByLanguage) {
+            languagesByFilename.get(filename)?.push(lang);
+        }
+
+        console.log(languagesByFilename);
+
+        return languagesByFilename;
     }
 
     private generateOutputFile(filePath: string, content, log: boolean = true): void {
