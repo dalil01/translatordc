@@ -28,26 +28,28 @@ export class OutputFileGenerator {
 
             content += "\n";
             for (let i = 0; i < config.translationKeys.length; i++) {
-                content += "\t" + config.translationKeys.at(i) + ": " + ((languages.length > 1) ? "\"" : "{\n");
+                content += "\t" + config.translationKeys.at(i) + ": ";
 
-                /*
-                for (let j = 0; j < config.languages.length; j++) {
-                    content += "\t".repeat(2) + config.languages.at(j) + ": \"";
+                if (languages.length > 1) {
+                    content += "{\n";
 
-                    //
+                    for (let j = 0; j < languages.length; j++) {
+                        content += "\t".repeat(2) + languages.at(j) + ": \"";
 
-                    content += "\"";
 
-                    if (j < config.languages.length -1) {
-                        content += ',';
+                        content += "\"";
+
+                        if (j < languages.length -1) {
+                            content += ',\n';
+                        }
                     }
 
-                    content += "\n";
+                    content += "\n\t}";
+                } else {
+                    content += "\"";
+
+                    content += "\"";
                 }
-
-                 */
-
-                content += "\t" + ((languages.length > 1) ? "\"" : "}");
 
                 if (i < config.translationKeys.length -1) {
                     content += ',';

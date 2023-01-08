@@ -1,5 +1,14 @@
 export const translated = {
-	key1: "	",
-	key2: "	",
-	key3: "	"
+	key1: {
+		fr: "",
+		es: ""
+	},
+	key2: {
+		fr: "",
+		es: ""
+	},
+	key3: {
+		fr: "",
+		es: ""
+	}
 }
