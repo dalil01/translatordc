@@ -30,7 +30,7 @@ translatordc.config.js | translatordc.config.json
 Here's an example `translatordc.config.js`:
 
 ```
-translatordc/tests/manual/configs/js$ ts-node ../../../../src/main.ts 
+
 ```
 
 ## Contribute
