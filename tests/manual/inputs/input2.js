@@ -1,5 +1,5 @@
 export const input2 = {
-  key1,
+  hello,
     key2,
     key3
 }

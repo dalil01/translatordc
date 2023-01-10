@@ -1,3 +1,5 @@
 export enum TranslationAPI {
-    GOOGLE
+    FREE_GOOGLE_TRANSLATE,
+    DEEPL,
+
 }

@@ -32,6 +32,7 @@
     "commander": "^9.4.1",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
+    "google-translate-api-browser": "^3.0.0",
     "path": "^0.12.7",
     "ts-node": "^10.9.1"
   },

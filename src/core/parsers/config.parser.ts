@@ -1,7 +1,7 @@
 import { ConfigType } from "../types/config.type";
 import * as fs from "fs";
 import path from "node:path";
-import { Logger } from "../utils/logger";
+import { Logger } from "../../utils/logger";
 import { ParsedConfigType } from "../types/parsed-config.type";
 import {Language} from "../constants/language";
 import {OutputFileExtensions} from "../constants/output-file-extensions";
@@ -55,7 +55,7 @@ export class ConfigParser {
 			inputFile: path.resolve(config.inputFile),
 			sourceLanguage: config.sourceLanguage,
 			targetLanguages: config.targetLanguages,
-			languages: [config.sourceLanguage, ...config.targetLanguages],
+			languages:  [...new Set([config.sourceLanguage, ...config.targetLanguages])],
 			outputOptions: parsedOutputOptions
 		};
 	}

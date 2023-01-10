@@ -2,7 +2,7 @@ import path from "path";
 import * as fs from "fs";
 import { DefaultConfig } from "../constants/default-config";
 import { CommandType } from "../types/command.type";
-import { Logger } from "../utils/logger";
+import { Logger } from "../../utils/logger";
 import { ParsedCommandType } from "../types/parsed-command.type";
 
 export class CommandParser {
