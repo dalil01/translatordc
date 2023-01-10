@@ -10,233 +10,215 @@ import {Translator} from "../translators/translator";
 
 export class OutputFileGenerator {
 
-    private languageByValueByKey: Map<string, Map<string, string>> = new Map();
-    private translator: Translator = new Translator();
+	private languageByValueByKey: Map<string, Map<string, string>> = new Map();
+	private notTranslatedLanguageByValueByKey: Map<string, Map<string, string>> = new Map();
 
-    public generate(config: ParsedConfigType): void {
-        console.log(config);
+	private translator: Translator = new Translator();
 
-        const outputOptions = config.outputOptions;
-        const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
-        console.log(languagesByFilename);
+	public generate(config: ParsedConfigType): void {
+		console.log(config);
 
-        const generatedFiles: Set<string> = new Set();
+		const outputOptions = config.outputOptions;
+		const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
+		console.log(languagesByFilename);
 
-        this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
+		const generatedFiles: Set<string> = new Set();
 
-        console.log(this.languageByValueByKey);
+		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
 
-        this.applyTranslations(config.sourceLanguage).then(() => {
-            console.log("ok", this.languageByValueByKey);
+		console.log(this.languageByValueByKey);
 
-            for (const [filename, languages] of languagesByFilename) {
+		this.applyTranslations(config.sourceLanguage, outputOptions.forceTranslation).then(() => {
+			console.log("ok", this.languageByValueByKey);
 
-            const isJSON = filename.endsWith(OutputFileExtensions.JSON);
+			for (const [filename, languages] of languagesByFilename) {
 
-            let content = '';
+				const isJSON = filename.endsWith(OutputFileExtensions.JSON);
 
-            if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
-                content += "export const " + filename.split('/').at(-1)?.split('.').at(0) + " = {";
-            } else if (isJSON) {
-                content += '{';
-            }
+				let content = '';
 
-            content += "\n";
+				if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
+					content += "export const " + filename.split('/').at(-1)?.split('.').at(0) + " = {";
+				} else if (isJSON) {
+					content += '{';
+				}
 
-            for (let i = 0; i < config.translationKeys.length; i++) {
-                content += "\t" + (isJSON ? "\"" : '') + config.translationKeys.at(i) + (isJSON ? "\"" : '') + ": ";
+				content += "\n";
 
-                if (languages.length > 1) {
-                    content += "{\n";
+				for (let i = 0; i < config.translationKeys.length; i++) {
+					content += "\t" + (isJSON ? "\"" : '') + config.translationKeys.at(i) + (isJSON ? "\"" : '') + ": ";
 
-                    for (let j = 0; j < languages.length; j++) {
-                        content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j) + (isJSON ? "\"" : '') + ": \"";
+					if (languages.length > 1) {
+						content += "{\n";
 
-
-                        content += "\"";
-
-                        if (j < languages.length -1) {
-                            content += ",\n";
-                        }
-                    }
-
-                    content += "\n\t}";
-                } else {
-                    content += "\"";
-
-                    content += "\"";
-                }
-
-                if (i < config.translationKeys.length -1) {
-                    content += ',';
-                }
-
-                content += "\n";
-            }
-
-            content += '}';
+						for (let j = 0; j < languages.length; j++) {
+							content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j) + (isJSON ? "\"" : '') + ": \"";
 
 
+							content += "\"";
 
-            //this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
-            generatedFiles.add(filename);
-        }
+							if (j < languages.length - 1) {
+								content += ",\n";
+							}
+						}
 
-        /*
-        let saved = '{';
+						content += "\n\t}";
+					} else {
+						content += "\"";
 
-        for (let i = 0; i < config.translationKeys.length; i++) {
-            saved += "\"" + config.translationKeys.at(i) + "\":{";
+						content += "\"";
+					}
 
-            for (let j = 0; j < config.languages.length; j++) {
-                saved += "\"" + config.languages[j] + "\":\"";
+					if (i < config.translationKeys.length - 1) {
+						content += ',';
+					}
 
-                saved += "\"";
+					content += "\n";
+				}
 
-                if (j < config.languages.length -1) {
-                    saved += ',';
-                }
-            }
+				content += '}';
 
-            saved += '}'
+				this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
+				generatedFiles.add(filename);
+			}
+		});
+	}
 
-            if (i < config.translationKeys.length -1) {
-                saved += ',';
-            }
-        }
+	private findLanguagesByFilename(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string[]> {
+		const fileOptions = outputOptions.fileOptions;
+		const filenameByLanguage: Map<string, string> = new Map();
 
-        saved += '}';
+		if (Array.isArray(fileOptions)) {
+			const languagesCustom: Language[] | string[] = [];
+			for (let i = 0; i < fileOptions.length; i++) {
+				languagesCustom.push(fileOptions[i].lang);
+			}
 
-        this.generateOutputFile(savedOutputFile, saved, false);
-         */
-        });
-    }
+			for (let i = 0; i < languages.length; i++) {
+				const language: any = languages[i];
+				if (!languagesCustom.includes(language)) {
+					filenameByLanguage.set(language, outputOptions.defaultFilename);
+				}
+			}
 
-    private findLanguagesByFilename(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string[]> {
-        const fileOptions = outputOptions.fileOptions;
-        const filenameByLanguage: Map<string, string> = new Map();
+			for (let i = 0; i < fileOptions.length; i++) {
+				filenameByLanguage.set(fileOptions[i].lang, fileOptions[i].name);
+			}
+		} else {
+			if (outputOptions.multipleFiles) {
+				for (let i = 0; i < languages.length; i++) {
+					filenameByLanguage.set(languages[i], languages[i] + '.' + fileOptions.name);
+				}
+			} else {
+				for (let i = 0; i < languages.length; i++) {
+					filenameByLanguage.set(languages[i], fileOptions.name);
+				}
+			}
+		}
 
-        if (Array.isArray(fileOptions)) {
-            const languagesCustom: Language[] | string[] = [];
-            for (let i = 0; i < fileOptions.length; i++) {
-                languagesCustom.push(fileOptions[i].lang);
-            }
+		const languagesByFilename: Map<string, string[]> = new Map();
+		for (const [, filename] of filenameByLanguage) {
+			languagesByFilename.set(filename, []);
+		}
 
-            for (let i = 0; i < languages.length; i++) {
-                const language: any = languages[i];
-                if (!languagesCustom.includes(language)) {
-                    filenameByLanguage.set(language, outputOptions.defaultFilename);
-                }
-            }
+		for (const [lang, filename] of filenameByLanguage) {
+			languagesByFilename.get(filename)?.push(lang);
+		}
 
-            for (let i = 0; i < fileOptions.length; i++) {
-                filenameByLanguage.set(fileOptions[i].lang, fileOptions[i].name);
-            }
-        } else {
-            if (outputOptions.multipleFiles) {
-                for (let i = 0; i < languages.length; i++) {
-                    filenameByLanguage.set(languages[i], languages[i] + '.' + fileOptions.name);
-                }
-            } else {
-                for (let i = 0; i < languages.length; i++) {
-                    filenameByLanguage.set(languages[i], fileOptions.name);
-                }
-            }
-        }
+		return languagesByFilename;
+	}
 
-        const languagesByFilename: Map<string, string[]> = new Map();
-        for (const [, filename] of filenameByLanguage) {
-            languagesByFilename.set(filename, []);
-        }
+	private async applyTranslations(sourceLanguage: string, forceTranslation: boolean): Promise<void> {
+		for (const [key, valueByLanguage] of this.languageByValueByKey) {
+			const baseValue = (valueByLanguage.get(sourceLanguage) || '').trim();
+			if (baseValue.length == 0) {
+				continue;
+			}
 
-        for (const [lang, filename] of filenameByLanguage) {
-            languagesByFilename.get(filename)?.push(lang);
-        }
+			for (let [language, value] of valueByLanguage) {
+				value = value.trim();
+				if (language != sourceLanguage) {
+					const translation = await this.translator.translate(baseValue, sourceLanguage as Language, language as Language);
 
-        return languagesByFilename;
-    }
+					if (value.length == 0 || forceTranslation) {
+						valueByLanguage.set(language, translation);
+					} else if (value != translation) {
+						this.fillNotTranslatedLanguageByValueByKey(key, language, value);
+					}
+				}
+			}
+		}
+	}
 
-    private async applyTranslations(sourceLanguage: string): Promise<void> {
-        for (const [, valueByLanguage] of this.languageByValueByKey) {
-            const baseValue = (valueByLanguage.get(sourceLanguage) || '').trim();
-            if (baseValue.length == 0) {
-                continue;
-            }
+	private autoSetLanguageByValueByKey(languagesByFilename: Map<string, string[]>, dir: string): void {
+		for (const [filename, languages] of languagesByFilename) {
+			const currentOutputPath = path.resolve(dir + filename);
+			const isJSON = filename.endsWith(OutputFileExtensions.JSON);
 
-            for (let [language, value] of valueByLanguage) {
-                value = value.trim();
-                if (language != sourceLanguage) {
-                    if (value.length > 0) {
-                        continue;
-                    }
+			if (fs.existsSync(currentOutputPath) && languages.length > 0) {
+				const map = new Map(Object.entries(require(currentOutputPath)));
 
-                    valueByLanguage.set(language, await this.translator.translate(baseValue, sourceLanguage as Language, language as Language));
-                }
-            }
-        }
-    }
+				if (isJSON) {
+					if (languages.length == 1) {
+						for (const [key, value] of map) {
+							this.fillLanguageByValueByKey(key, languages[0], value as string);
+						}
+					} else {
+						// @ts-ignore
+						this.mergeLanguageByValueByKey(map);
+					}
+				} else {
+					for (const [k, v] of map) {
+						// @ts-ignore
+						const vEntries = Object.entries(v);
+						console.log(map)
 
-    private autoSetLanguageByValueByKey(languagesByFilename: Map<string, string[]>, dir: string): void {
-        for (const [filename, languages] of languagesByFilename) {
-            const currentOutputPath = path.resolve(dir + filename);
-            const isJSON = filename.endsWith(OutputFileExtensions.JSON);
+						if (languages.length == 1) {
+							for (const [key, value] of vEntries) {
+								this.fillLanguageByValueByKey(key, languages[0], value as string);
+							}
+						} else {
+							// @ts-ignore
+							this.mergeLanguageByValueByKey(new Map(vEntries));
+						}
+					}
+				}
+			}
+		}
+	}
 
-            if (fs.existsSync(currentOutputPath) && languages.length > 0) {
-                const map = new Map(Object.entries(require(currentOutputPath)));
+	private fillLanguageByValueByKey(key: string, language: string, value: string): void {
+		if (!this.languageByValueByKey.get(key)) {
+			this.languageByValueByKey.set(key, new Map());
+		}
 
-                if (isJSON) {
-                    if (languages.length == 1) {
-                        for (const [key, value] of map) {
-                            this.fillLanguageByValueByKey(key, languages[0], value as string);
-                        }
-                    } else {
-                        // @ts-ignore
-                        this.mergeLanguageByValueByKey(map);
-                    }
-                } else {
-                    for (const [k, v] of map) {
-                        // @ts-ignore
-                        const vEntries = Object.entries(v);
-                        console.log(map)
+		this.languageByValueByKey.get(key)?.set(language, value);
+	}
 
-                        if (languages.length == 1) {
-                            for (const [key, value] of vEntries) {
-                                this.fillLanguageByValueByKey(key, languages[0], value as string );
-                            }
-                        } else {
-                            // @ts-ignore
-                            this.mergeLanguageByValueByKey(new Map(vEntries));
-                        }
-                    }
-                }
-            }
-        }
-    }
+	private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>): void {
+		this.languageByValueByKey = new Map([...this.languageByValueByKey, ...map]);
+	}
 
-    private fillLanguageByValueByKey(key: string, language: string, value: string): void {
-        if (!this.languageByValueByKey.get(key)) {
-            this.languageByValueByKey.set(key, new Map());
-        }
+	private fillNotTranslatedLanguageByValueByKey(key: string, language: string, value: string): void {
+		if (!this.notTranslatedLanguageByValueByKey.get(key)) {
+			this.notTranslatedLanguageByValueByKey.set(key, new Map());
+		}
 
-        this.languageByValueByKey.get(key)?.set(language, value);
-    }
+		this.notTranslatedLanguageByValueByKey.get(key)?.set(language, value);
+	}
 
-    private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>): void {
-        this.languageByValueByKey = new Map([...this.languageByValueByKey, ...map]);
-    }
-
-    private generateOutputFile(filePath: string, content, log: boolean = true): void {
-        fse.outputFile(filePath, content)
-            .then(() => {
-                if (log) {
-                    Logger.success("Generated: " + filePath);
-                }
-            })
-            .catch(err => {
-                if (log) {
-                    Logger.error(err);
-                }
-            });
-    }
+	private generateOutputFile(filePath: string, content, log: boolean = true): void {
+		fse.outputFile(filePath, content)
+			.then(() => {
+				if (log) {
+					Logger.success("Generated: " + filePath);
+				}
+			})
+			.catch(err => {
+				if (log) {
+					Logger.error(err);
+				}
+			});
+	}
 
 }

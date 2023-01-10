@@ -8,6 +8,7 @@ module.exports = {
         dir: "../../outputs",
         multipleFiles: true,
         fileOptions: { name: "myfile.json" },
+        forceTranslation: true
     },
 
 

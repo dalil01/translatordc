@@ -4,6 +4,6 @@ export const DefaultConfig = {
 		dir: "./",
 		multipleFiles: false,
 		name: "translated",
-		singleQuote: false
+		forceTranslation: false
 	}
 }

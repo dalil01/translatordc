@@ -5,7 +5,6 @@ import { Logger } from "../../utils/logger";
 import { ParsedConfigType } from "../types/parsed-config.type";
 import {Language} from "../constants/language";
 import {OutputFileExtensions} from "../constants/output-file-extensions";
-import {OutputOptionsType} from "../types/output-options.type";
 import {ParsedOutputOptionsType} from "../types/parsed-output-options.type";
 import {DefaultConfig} from "../constants/default-config";
 
@@ -119,7 +118,8 @@ export class ConfigParser {
 			dir,
 			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") && outputOptions.multipleFiles ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
 			defaultFilename,
-			fileOptions
+			fileOptions,
+			forceTranslation: outputOptions.hasOwnProperty("forceTranslation") ? outputOptions.forceTranslation : DefaultConfig.outputOptions.forceTranslation
 		};
 	}
 

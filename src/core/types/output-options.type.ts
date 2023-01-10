@@ -7,6 +7,6 @@ export type OutputOptionsType = {
     /*translationAPI?: {
         name: TranslationAPI,
 
-    };
-    forceTranslation: boolean;*/
+    };*/
+    forceTranslation: boolean;
 };
