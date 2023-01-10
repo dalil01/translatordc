@@ -1,16 +1,16 @@
 {
 	"key1": {
-		"fr": "",
-		"en": "",
+		"fr": "La clé 1",
+		"en": "Key 1",
 		"es": ""
 	},
 	"key2": {
-		"fr": "",
-		"en": "",
+		"fr": "La clé 2",
+		"en": "Key 2",
 		"es": ""
 	},
 	"key3": {
-		"fr": "",
+		"fr": "LA clé TROis",
 		"en": "",
 		"es": ""
 	}

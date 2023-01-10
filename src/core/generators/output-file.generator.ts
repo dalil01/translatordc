@@ -28,7 +28,7 @@ export class OutputFileGenerator {
 
 		//console.log(this.languageByValueByKey);
 
-		this.applyTranslations(config.sourceLanguage, outputOptions.forceTranslation).then(() => {
+		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
 			//console.log(this.languageByValueByKey);
 
 			for (const [filename, languages] of languagesByFilename) {
@@ -149,7 +149,7 @@ export class OutputFileGenerator {
 		return languagesByFilename;
 	}
 
-	private async applyTranslations(sourceLanguage: string, forceTranslation: boolean): Promise<void> {
+	private async applyTranslations(sourceLanguage: string, outputOptions: ParsedOutputOptionsType): Promise<void> {
 		for (const [key, valueByLanguage] of this.languageByValueByKey) {
 			const baseValue = (valueByLanguage.get(sourceLanguage) || '').trim();
 			if (baseValue.length == 0) {
@@ -159,12 +159,13 @@ export class OutputFileGenerator {
 			for (let [language, value] of valueByLanguage) {
 				value = value.trim();
 				if (language != sourceLanguage) {
-					const translation = await this.translator.translate(baseValue, sourceLanguage as Language, language as Language);
-
-					if (value.length == 0 || forceTranslation) {
-						valueByLanguage.set(language, translation);
-					} else if (value != translation) {
-						this.fillNotTranslatedLanguageByValueByKey(key, language, value);
+					const translation = await this.translator.translate(baseValue, sourceLanguage as Language, language as Language, outputOptions.translationAPI.name, outputOptions.translationAPI.apiKey);
+					if (translation.length > 0) {
+						if (value.length == 0 || outputOptions.forceTranslation) {
+							valueByLanguage.set(language, translation);
+						} else if (value != translation) {
+							this.fillNotTranslatedLanguageByValueByKey(key, language, value);
+						}
 					}
 				}
 			}
