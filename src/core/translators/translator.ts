@@ -1,6 +1,8 @@
+import {Language} from "../constants/language";
+
 export class Translator {
 
-    public translate(): string {
+    public translate(from: Language, to: Language): string {
         return "";
     }
 

@@ -10,27 +10,52 @@ import * as dgram from "dgram";
 
 export class OutputFileGenerator {
 
+    private languageByValueByKey: Map<string, Map<string, string>> = new Map();
+
     public generate(config: ParsedConfigType): void {
         console.log(config);
 
         const outputOptions = config.outputOptions;
         const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
         const generatedFiles: Set<string> = new Set();
-        const savedOutputFile = path.dirname(__filename) + "/saved-output.json";
 
-        if (fs.existsSync(savedOutputFile)) {
-            const lastSavedOutput = require(savedOutputFile);
-            //console.log(lastSavedOutput["key1"]);
-        }
-
-        // TODO : get all existed data.
-        let currentOutput = '';
         for (const [filename, languages] of languagesByFilename) {
             const currentOutputPath = path.resolve(outputOptions.dir + filename);
-            if (fs.existsSync(currentOutputPath)) {
-                console.log(require(currentOutputPath));
+            const isJSON = filename.endsWith(OutputFileExtensions.JSON);
+
+            if (fs.existsSync(currentOutputPath) && languages.length > 0) {
+                const map = new Map(Object.entries(require(currentOutputPath)));
+
+                if (isJSON) {
+                    //console.log("knk", map, languages.length)
+                    if (languages.length == 1) {
+                        for (const [key, value] of map) {
+                            this.fillLanguageByValueByKey(key, languages[0], value as string);
+                        }
+                    } else {
+                        // @ts-ignore
+                        this.mergeLanguageByValueByKey(map);
+                    }
+                } else {
+                    for (const [k, v] of map) {
+                        // @ts-ignore
+                        const vEntries = Object.entries(v);
+                        console.log(map)
+
+                        if (languages.length == 1) {
+                            for (const [key, value] of vEntries) {
+                                this.fillLanguageByValueByKey(key, languages[0], value as string );
+                            }
+                        } else {
+                            // @ts-ignore
+                            this.mergeLanguageByValueByKey(new Map(vEntries));
+                        }
+                    }
+                }
             }
         }
+
+        console.log(this.languageByValueByKey);
 
         for (const [filename, languages] of languagesByFilename) {
 
@@ -85,6 +110,7 @@ export class OutputFileGenerator {
             generatedFiles.add(filename);
         }
 
+        /*
         let saved = '{';
 
         for (let i = 0; i < config.translationKeys.length; i++) {
@@ -110,6 +136,7 @@ export class OutputFileGenerator {
         saved += '}';
 
         this.generateOutputFile(savedOutputFile, saved, false);
+         */
     }
 
     private findLanguagesByFilename(outputOptions: ParsedOutputOptionsType, languages: string[]): Map<string, string[]> {
@@ -156,6 +183,18 @@ export class OutputFileGenerator {
         console.log(languagesByFilename);
 
         return languagesByFilename;
+    }
+
+    private fillLanguageByValueByKey(key: string, language: string, value: string): void {
+        if (!this.languageByValueByKey.get(key)) {
+            this.languageByValueByKey.set(key, new Map());
+        }
+
+        this.languageByValueByKey.get(key)?.set(language, value);
+    }
+
+    private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>): void {
+        this.languageByValueByKey = new Map([...this.languageByValueByKey, ...map]);
     }
 
     private generateOutputFile(filePath: string, content, log: boolean = true): void {
