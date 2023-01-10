@@ -119,6 +119,7 @@ export class ConfigParser {
 			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") && outputOptions.multipleFiles ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
 			defaultFilename,
 			fileOptions,
+			translationAPI: outputOptions.hasOwnProperty("translationAPI") && outputOptions.translationAPI ? outputOptions.translationAPI : DefaultConfig.outputOptions.translationAPI,
 			forceTranslation: outputOptions.hasOwnProperty("forceTranslation") ? outputOptions.forceTranslation : DefaultConfig.outputOptions.forceTranslation
 		};
 	}

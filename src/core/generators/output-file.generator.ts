@@ -46,14 +46,32 @@ export class OutputFileGenerator {
 				content += "\n";
 
 				for (let i = 0; i < config.translationKeys.length; i++) {
-					content += "\t" + (isJSON ? "\"" : '') + config.translationKeys.at(i) + (isJSON ? "\"" : '') + ": ";
+					const key = config.translationKeys.at(i);
 
-					if (languages.length > 1) {
+					content += "\t" + (isJSON ? "\"" : '') + key + (isJSON ? "\"" : '') + ": ";
+
+					if (languages.length == 1) {
+						// @ts-ignore
+						content += "\"";
+
+						// @ts-ignore
+						const valueByLanguage = this.languageByValueByKey.get(key);
+						if (valueByLanguage) {
+							content += (valueByLanguage.get(languages[0]) || '');
+						}
+
+						content += "\"";
+					} else if (languages.length > 1) {
 						content += "{\n";
 
 						for (let j = 0; j < languages.length; j++) {
 							content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j) + (isJSON ? "\"" : '') + ": \"";
 
+							// @ts-ignore
+							const valueByLanguage = this.languageByValueByKey.get(key);
+							if (valueByLanguage) {
+								content += (valueByLanguage.get(languages.at(j) || ''));
+							}
 
 							content += "\"";
 
@@ -63,10 +81,6 @@ export class OutputFileGenerator {
 						}
 
 						content += "\n\t}";
-					} else {
-						content += "\"";
-
-						content += "\"";
 					}
 
 					if (i < config.translationKeys.length - 1) {
@@ -79,6 +93,13 @@ export class OutputFileGenerator {
 				content += '}';
 
 				this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
+
+				if (this.notTranslatedLanguageByValueByKey.size > 0) {
+					Logger.warning("Please note that one or more keys have not been translated because the translation values do not match the current values.\n" +
+						"It is possible that your language options have changed or that you have changed some things.\n" +
+						"However, the -f option allows you to force the translation.");
+				}
+
 				generatedFiles.add(filename);
 			}
 		});

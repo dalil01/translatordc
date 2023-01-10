@@ -6,7 +6,7 @@ module.exports = {
     targetLanguages: [Language.English, 'es'],
     outputOptions: {
         dir: "../../outputs",
-        multipleFiles: true,
+        multipleFiles: false,
         fileOptions: { name: "myfile.json" },
         forceTranslation: true
     },

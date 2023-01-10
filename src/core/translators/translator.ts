@@ -1,7 +1,6 @@
 import {Language} from "../constants/language";
 import {Logger} from "../../utils/logger";
 import {TranslationAPI} from "../constants/translation-api";
-import {resolve} from "path";
 
 const {generateRequestUrl, normaliseResponse} = require('google-translate-api-browser');
 const https = require('https');
