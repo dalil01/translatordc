@@ -16,20 +16,20 @@ export class OutputFileGenerator {
 	private translator: Translator = new Translator();
 
 	public generate(config: ParsedConfigType): void {
-		console.log(config);
+		//console.log(config);
 
 		const outputOptions = config.outputOptions;
 		const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
-		console.log(languagesByFilename);
+		//console.log(languagesByFilename);
 
 		const generatedFiles: Set<string> = new Set();
 
 		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
 
-		console.log(this.languageByValueByKey);
+		//console.log(this.languageByValueByKey);
 
 		this.applyTranslations(config.sourceLanguage, outputOptions.forceTranslation).then(() => {
-			console.log("ok", this.languageByValueByKey);
+			//console.log(this.languageByValueByKey);
 
 			for (const [filename, languages] of languagesByFilename) {
 
@@ -217,7 +217,11 @@ export class OutputFileGenerator {
 	}
 
 	private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>): void {
-		this.languageByValueByKey = new Map([...this.languageByValueByKey, ...map]);
+		for (const [key, valueByLanguage] of map) {
+			for (const [language, value] of Object.entries(valueByLanguage)) {
+				this.fillLanguageByValueByKey(key, language, value);
+			}
+		}
 	}
 
 	private fillNotTranslatedLanguageByValueByKey(key: string, language: string, value: string): void {
