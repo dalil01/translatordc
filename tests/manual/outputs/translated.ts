@@ -1,17 +1,14 @@
 export const translated = {
 	key1: {
-		fr: "undefined",
-		es: "indefinido",
-		ps: "نا تعریف شوی"
+		es: "Buenos dias",
+		ps: "سلام"
 	},
 	key2: {
-		fr: "undefined",
-		es: "indefinido",
-		ps: "نا تعریف شوی"
+		es: "Poner al día",
+		ps: "د تازه کولو لپاره"
 	},
 	key3: {
-		fr: "undefined",
-		es: "indefinido",
-		ps: "نا تعریف شوی"
+		es: "Estoy aquí",
+		ps: "زه دلته یم"
 	}
 }

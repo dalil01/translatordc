@@ -1,5 +1,14 @@
 {
-	"key1": "undefined",
-	"key2": "undefined",
-	"key3": "undefined"
+	"key1": {
+		"en": "Hello",
+		"fr": "Bonjour"
+	},
+	"key2": {
+		"en": "To update",
+		"fr": "Mettre à jour"
+	},
+	"key3": {
+		"en": "I'm here",
+		"fr": "Je suis là"
+	}
 }

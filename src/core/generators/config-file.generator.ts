@@ -33,11 +33,11 @@ export class ConfigFileGenerator {
 			for (const object of parsedConfig.outputOptions.fileOptions) {
 				content += "[\n";
 				
-				for (const [key, value] of Object.entries(parsedConfig.outputOptions.fileOptions)) {
+				for (const [key, value] of Object.entries(object)) {
 					content += "\t\t\t" + key + ": \"" + value + "\"";
 				}
 				
-				content += ']';
+				content += "\n\t\t],\n";
 			}
 		} else {
 			content += "{\n";

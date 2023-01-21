@@ -6,7 +6,12 @@ module.exports = {
 		dir: "../../outputs/",
 		multipleFiles: true,
 		fileOptions: [
-			0: "[object Object]"]		translationAPI: {"name":"FREE_GOOGLE_TRANSLATE","apiKey":""},
+			lang: "en"			name: "myfile.json"
+		],
+[
+			lang: "fr"			name: "myfile.json"
+		],
+		translationAPI: {"name":"FREE_GOOGLE_TRANSLATE","apiKey":""},
 		forceTranslation: true,
 		keysNotToBeTranslated: []
 	}

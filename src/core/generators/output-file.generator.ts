@@ -202,7 +202,7 @@ export class OutputFileGenerator {
 							}
 						} else {
 							// @ts-ignore
-							this.mergeLanguageByValueByKey(new Map(vEntries), languages);
+							this.mergeLanguageByValueByKey(new Map(vEntries), []);
 						}
 					}
 				}
