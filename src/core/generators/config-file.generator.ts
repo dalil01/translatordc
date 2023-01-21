@@ -30,24 +30,52 @@ export class ConfigFileGenerator {
 		;
 		
 		if (Array.isArray(parsedConfig.outputOptions.fileOptions)) {
+			content += "[\n";
+			
+			let i = 0;
 			for (const object of parsedConfig.outputOptions.fileOptions) {
-				content += "[\n";
+				content += "\t\t\t{ ";
 				
+				let j = 0;
 				for (const [key, value] of Object.entries(object)) {
-					content += "\t\t\t" + key + ": \"" + value + "\"";
+					content += key + ": \"" + value + "\"";
+					if (j == 0) {
+						content += ", ";
+						j++;
+					}
 				}
 				
-				content += "\n\t\t],\n";
+				content += " }";
+				
+				if (i == 0) {
+					content += ",\n";
+					i++;
+				}
 			}
+			
+			content += "\n\t\t],\n";
 		} else {
-			content += "{\n";
+			content += "{ ";
 			for (const [key, value] of Object.entries(parsedConfig.outputOptions.fileOptions)) {
-				content += "\t\t\t" + key + ": \"" + value + "\"";
+				content += key + ": \"" + value + "\"";
 			}
-			content += "\n\t\t},\n"
+			content += " },\n"
 		}
 		
-		content += "\t\ttranslationAPI: " + JSON.stringify(parsedConfig.outputOptions.translationAPI) + ",\n" +
+		content += "\t\ttranslationAPI: ";
+		
+		content += "{ ";
+		
+		let i = 0;
+		for (const [key, value] of Object.entries(parsedConfig.outputOptions.translationAPI)) {
+			content += key + ": \"" + value + "\"";
+			if (i == 0) {
+				content += ", ";
+				i++
+			}
+		}
+		
+		content += " },\n" +
 			"\t\tforceTranslation: " + parsedConfig.outputOptions.forceTranslation + ",\n" +
 			"\t\tkeysNotToBeTranslated: " + (config?.outputOptions?.hasOwnProperty("keysNotToBeTranslated") ? config.outputOptions?.keysNotToBeTranslated : "[]") + "\n" +
 			"\t}"
