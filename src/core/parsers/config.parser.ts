@@ -16,7 +16,7 @@ export class ConfigParser {
 			return null;
 		}
 
-		const translationKeys = this.findTranslationKeys(path.resolve(config.inputFile));
+		let translationKeys = this.findTranslationKeys(path.resolve(config.inputFile));
 		if (!translationKeys) {
 			Logger.error("The content of your translation keys file is not in expected format.");
 			return null;
@@ -44,22 +44,23 @@ export class ConfigParser {
 			return null;
 		}
 
-		const parsedOutputOptions = this.parseOutputOptions(config);
+		const languages = [...new Set([config.sourceLanguage, ...config.targetLanguages])];
+		const parsedOutputOptions = this.parseOutputOptions(config, languages);
 		if (!parsedOutputOptions) {
 			return null;
 		}
-
+		
 		return {
 			translationKeys,
 			inputFile: path.resolve(config.inputFile),
 			sourceLanguage: config.sourceLanguage,
 			targetLanguages: config.targetLanguages,
-			languages:  [...new Set([config.sourceLanguage, ...config.targetLanguages])],
+			languages,
 			outputOptions: parsedOutputOptions
 		};
 	}
 
-	private parseOutputOptions(config: ConfigType): ParsedOutputOptionsType | null {
+	private parseOutputOptions(config: ConfigType, languages: string[]): ParsedOutputOptionsType | null {
 		if (!config.outputOptions) {
 			return null;
 		}
@@ -113,14 +114,41 @@ export class ConfigParser {
 			dir = path.resolve(dir);
 			dir += (dir?.at(-1) != '/' ? '/' : '');
 		}
-
+		
+		let keysNotToTranslate: Map<string, string[]> = new Map();
+		if (outputOptions.hasOwnProperty("keysNotToBeTranslated")) {
+			const _keysNotToBeTranslated = outputOptions.keysNotToBeTranslated;
+			for (const _key of _keysNotToBeTranslated as string[]){
+				const k = _key.split(':');
+				if (k.length > 1) {
+					const languagesSplit = k[1].replaceAll('(', '').replaceAll(')', '').split(',');
+					const ls = [];
+					for (const l of languagesSplit) {
+						// @ts-ignore
+						ls.push(l.trim());
+					}
+					keysNotToTranslate.set(k[0], ls)
+				} else {
+					keysNotToTranslate.set(k[0], languages);
+				}
+			}
+		} else {
+			keysNotToTranslate = DefaultConfig.outputOptions.keysNotToBeTranslated;
+		}
+		
+		console.log(keysNotToTranslate);
+		
 		return {
 			dir,
-			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") && outputOptions.multipleFiles ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
+			// @ts-ignore
+			multipleFiles: outputOptions.hasOwnProperty("multipleFiles") ? outputOptions.multipleFiles : DefaultConfig.outputOptions.multipleFiles,
 			defaultFilename,
 			fileOptions,
-			translationAPI: outputOptions.hasOwnProperty("translationAPI") && outputOptions.translationAPI ? outputOptions.translationAPI : DefaultConfig.outputOptions.translationAPI,
-			forceTranslation: outputOptions.hasOwnProperty("forceTranslation") ? outputOptions.forceTranslation : DefaultConfig.outputOptions.forceTranslation
+			// @ts-ignore
+			translationAPI: outputOptions.hasOwnProperty("translationAPI") ? outputOptions.translationAPI : DefaultConfig.outputOptions.translationAPI,
+			// @ts-ignore
+			forceTranslation: outputOptions.hasOwnProperty("forceTranslation") ? outputOptions.forceTranslation : DefaultConfig.outputOptions.forceTranslation,
+			keysNotToTranslate
 		};
 	}
 

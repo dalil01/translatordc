@@ -4,16 +4,17 @@ const {TranslationAPI} = require("../../../../src/core/constants/translation-api
 module.exports = {
     inputFile: "../../inputs/input1.ts",
     sourceLanguage: Language.French,
-    targetLanguages: [Language.English, 'es'],
+    targetLanguages: [Language.English, 'es', Language.Pashto],
     outputOptions: {
         dir: "../../outputs",
-        multipleFiles: false,
+        multipleFiles: true,
         fileOptions: { name: "myfile.json" },
         translationAPI: {
-            name: TranslationAPI.FREE_DEEPL,
+            name: TranslationAPI.FREE_GOOGLE_TRANSLATE,
             apiKey: ''
         },
-        forceTranslation: true
+        forceTranslation: true,
+        keysNotToBeTranslated: ["key3:(fr, en)"]
     },
 
 

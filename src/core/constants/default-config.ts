@@ -10,6 +10,7 @@ export const DefaultConfig = {
 			name: TranslationAPI.FREE_GOOGLE_TRANSLATE,
 			apiKey: ''
 		},
-		forceTranslation: false
+		forceTranslation: false,
+		keysNotToBeTranslated: new Map()
 	}
 }

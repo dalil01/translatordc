@@ -9,6 +9,6 @@ export type OutputOptionsType = {
         name: TranslationAPI;
         apiKey: string;
     };
-    forceTranslation: boolean;
-    keysNotToTranslate: string[];
+    forceTranslation?: boolean;
+    keysNotToBeTranslated?: string[]; // key | key:fr | key:(fr, en)
 };

@@ -180,7 +180,7 @@ export class OutputFileGenerator {
 
 			if (fs.existsSync(currentOutputPath) && languages.length > 0) {
 				const map = new Map(Object.entries(require(currentOutputPath)));
-				console.log("abc", map)
+				//console.log(map)
 				
 				if (isJSON) {
 					if (languages.length == 1) {

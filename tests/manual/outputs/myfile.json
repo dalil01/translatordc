@@ -1,17 +1,20 @@
 {
 	"key1": {
-		"fr": "La clé 1",
-		"en": "Key 1",
-		"es": ""
+		"fr": "Bonjour",
+		"en": "Hello",
+		"es": "Buenos dias",
+		"ps": "سلام"
 	},
 	"key2": {
-		"fr": "La clé 2",
-		"en": "Key 2",
-		"es": ""
+		"fr": "Voila",
+		"en": "There",
+		"es": "Listo",
+		"ps": "هلته"
 	},
 	"key3": {
-		"fr": "LA clé TROis",
-		"en": "",
-		"es": ""
+		"fr": "C'est bien",
+		"en": "It's good",
+		"es": "Está bien",
+		"ps": "دا ښه دی"
 	}
 }
