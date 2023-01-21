@@ -14,7 +14,7 @@ module.exports = {
             apiKey: ''
         },
         forceTranslation: true,
-        keysNotToBeTranslated: ["key3:(fr, en)"]
+        keysNotToBeTranslated: ["key3:es"]
     },
 
 

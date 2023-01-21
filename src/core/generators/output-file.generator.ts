@@ -20,12 +20,12 @@ export class OutputFileGenerator {
 
 		const outputOptions = config.outputOptions;
 		const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
-		console.log(languagesByFilename);
+		//console.log(languagesByFilename);
 
 		const generatedFiles: Set<string> = new Set();
 
 		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
-		console.log(this.languageByValueByKey);
+		//console.log(this.languageByValueByKey);
 
 		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
 			//console.log(this.languageByValueByKey);
@@ -159,7 +159,7 @@ export class OutputFileGenerator {
 
 			for (let [language, value] of valueByLanguage) {
 				value = value.trim();
-				if (language != sourceLanguage) {
+				if (language != sourceLanguage && !outputOptions.keysNotToBeTranslated.get(key)?.includes(language)) {
 					const translation = await this.translator.translate(baseValue, sourceLanguage as Language, language as Language, outputOptions.translationAPI.name, outputOptions.translationAPI.apiKey);
 					if (translation.length > 0) {
 						if (value.length == 0 || outputOptions.forceTranslation) {

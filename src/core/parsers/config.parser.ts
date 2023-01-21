@@ -115,7 +115,7 @@ export class ConfigParser {
 			dir += (dir?.at(-1) != '/' ? '/' : '');
 		}
 		
-		let keysNotToTranslate: Map<string, string[]> = new Map();
+		let keysNotToBeTranslated: Map<string, string[]> = new Map();
 		if (outputOptions.hasOwnProperty("keysNotToBeTranslated")) {
 			const _keysNotToBeTranslated = outputOptions.keysNotToBeTranslated;
 			for (const _key of _keysNotToBeTranslated as string[]){
@@ -127,16 +127,14 @@ export class ConfigParser {
 						// @ts-ignore
 						ls.push(l.trim());
 					}
-					keysNotToTranslate.set(k[0], ls)
+					keysNotToBeTranslated.set(k[0], ls)
 				} else {
-					keysNotToTranslate.set(k[0], languages);
+					keysNotToBeTranslated.set(k[0], languages);
 				}
 			}
 		} else {
-			keysNotToTranslate = DefaultConfig.outputOptions.keysNotToBeTranslated;
+			keysNotToBeTranslated = DefaultConfig.outputOptions.keysNotToBeTranslated;
 		}
-		
-		console.log(keysNotToTranslate);
 		
 		return {
 			dir,
@@ -148,7 +146,7 @@ export class ConfigParser {
 			translationAPI: outputOptions.hasOwnProperty("translationAPI") ? outputOptions.translationAPI : DefaultConfig.outputOptions.translationAPI,
 			// @ts-ignore
 			forceTranslation: outputOptions.hasOwnProperty("forceTranslation") ? outputOptions.forceTranslation : DefaultConfig.outputOptions.forceTranslation,
-			keysNotToTranslate
+			keysNotToBeTranslated
 		};
 	}
 
