@@ -1,20 +1,5 @@
 {
-	"key1": {
-		"fr": "Bonjour",
-		"en": "Hello",
-		"es": "Buenos dias",
-		"ps": "سلام"
-	},
-	"key2": {
-		"fr": "Voila",
-		"en": "There",
-		"es": "Listo",
-		"ps": "هلته"
-	},
-	"key3": {
-		"fr": "C'est bien",
-		"en": "It's good",
-		"es": "Está bien",
-		"ps": "دا ښه دی"
-	}
+	"key1": "undefined",
+	"key2": "undefined",
+	"key3": "undefined"
 }

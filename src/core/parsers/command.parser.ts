@@ -15,6 +15,22 @@ export class CommandParser {
 			return null;
 		}
 		
+		if (command.hasOwnProperty("saveConfig")) {
+			const file = command.saveConfig;
+			
+			let isValidExt = false;
+			for (const ext of DefaultConfig.defaultFileExtensions) {
+				if (file.endsWith(ext)) {
+					isValidExt = true;
+				}
+			}
+			
+			if (!isValidExt) {
+				Logger.error("Invalid config file extension (required: \"" + DefaultConfig.defaultFileExtensions.join("\", \"") + "\").");
+				return null;
+			}
+		}
+		
 		return {
 			config: { ...require(existedConfigFile), ...command }
 		};

@@ -1,3 +1,4 @@
 export type CommandType = {
-	configFile: string
+	configFile: string,
+	saveConfig: string
 }

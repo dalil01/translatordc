@@ -2,6 +2,7 @@ import {TranslationAPI} from "./translation-api";
 
 export const DefaultConfig = {
 	defaultFileNames: ["translatordc.config.js", "translatordc.config.json"],
+	defaultFileExtensions: [".js", ".json"],
 	outputOptions: {
 		dir: "./",
 		multipleFiles: false,

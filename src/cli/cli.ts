@@ -38,6 +38,7 @@ export class CLI {
 			.option("-t, --translation-keys-file <value>", "Translation keys file")
 			.option("-o, --output-file <value>", "Output file")
 			.option("-r, --restore-output-file <value>", "Restore output file")
+			.option("-s, --save-config <value>", "Display help")
 			.option("-h, --help", "Display help")
 			.parse(process.argv)
 		;

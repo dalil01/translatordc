@@ -16,7 +16,7 @@ export class OutputFileGenerator {
 	private translator: Translator = new Translator();
 
 	public generate(config: ParsedConfigType): void {
-		//console.log(config);
+		console.log(config);
 
 		const outputOptions = config.outputOptions;
 		const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
@@ -192,7 +192,7 @@ export class OutputFileGenerator {
 						this.mergeLanguageByValueByKey(map, languages);
 					}
 				} else {
-					for (const [k, v] of map) {
+					for (const [, v] of map) {
 						// @ts-ignore
 						const vEntries = Object.entries(v);
 
@@ -202,7 +202,7 @@ export class OutputFileGenerator {
 							}
 						} else {
 							// @ts-ignore
-							this.mergeLanguageByValueByKey(new Map(vEntries));
+							this.mergeLanguageByValueByKey(new Map(vEntries), languages);
 						}
 					}
 				}
