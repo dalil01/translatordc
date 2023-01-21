@@ -10,4 +10,5 @@ export type OutputOptionsType = {
         apiKey: string;
     };
     forceTranslation: boolean;
+    keysNotToTranslate: string[];
 };

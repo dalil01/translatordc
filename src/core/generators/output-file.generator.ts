@@ -20,13 +20,12 @@ export class OutputFileGenerator {
 
 		const outputOptions = config.outputOptions;
 		const languagesByFilename: Map<string, string[]> = this.findLanguagesByFilename(outputOptions, config.languages);
-		//console.log(languagesByFilename);
+		console.log(languagesByFilename);
 
 		const generatedFiles: Set<string> = new Set();
 
 		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
-
-		//console.log(this.languageByValueByKey);
+		console.log(this.languageByValueByKey);
 
 		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
 			//console.log(this.languageByValueByKey);
@@ -91,6 +90,8 @@ export class OutputFileGenerator {
 				}
 
 				content += '}';
+				
+				//console.log(content);
 
 				this.generateOutputFile(outputOptions.dir + filename, content, !generatedFiles.has(filename));
 
@@ -175,11 +176,12 @@ export class OutputFileGenerator {
 	private autoSetLanguageByValueByKey(languagesByFilename: Map<string, string[]>, dir: string): void {
 		for (const [filename, languages] of languagesByFilename) {
 			const currentOutputPath = path.resolve(dir + filename);
-			const isJSON = filename.endsWith(OutputFileExtensions.JSON);
+			const isJSON = filename.toLowerCase().endsWith(OutputFileExtensions.JSON);
 
 			if (fs.existsSync(currentOutputPath) && languages.length > 0) {
 				const map = new Map(Object.entries(require(currentOutputPath)));
-
+				console.log("abc", map)
+				
 				if (isJSON) {
 					if (languages.length == 1) {
 						for (const [key, value] of map) {
@@ -187,13 +189,12 @@ export class OutputFileGenerator {
 						}
 					} else {
 						// @ts-ignore
-						this.mergeLanguageByValueByKey(map);
+						this.mergeLanguageByValueByKey(map, languages);
 					}
 				} else {
 					for (const [k, v] of map) {
 						// @ts-ignore
 						const vEntries = Object.entries(v);
-						console.log(map)
 
 						if (languages.length == 1) {
 							for (const [key, value] of vEntries) {
@@ -217,8 +218,14 @@ export class OutputFileGenerator {
 		this.languageByValueByKey.get(key)?.set(language, value);
 	}
 
-	private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>): void {
+	private mergeLanguageByValueByKey(map: Map<string, Map<string, string>>, languages: string[]): void {
 		for (const [key, valueByLanguage] of map) {
+			for (const language of languages) {
+				if (!valueByLanguage.hasOwnProperty(language)) {
+					valueByLanguage[language] = '';
+				}
+			}
+			
 			for (const [language, value] of Object.entries(valueByLanguage)) {
 				this.fillLanguageByValueByKey(key, language, value);
 			}
