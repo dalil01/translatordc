@@ -7,12 +7,15 @@ import { ParsedConfigType } from "../types/parsed-config.type";
 
 export class ConfigFileGenerator {
 	
+	// TODO : refactor
+	
 	public generate(command: CommandType, config: ConfigType, parsedConfig: ParsedConfigType): void {
 		//console.log(config);
 		
 		let content = "";
 		
-		if (command.saveConfig.endsWith(".js")) {
+		const isJs = command.saveConfig.endsWith(".js");
+		if (isJs) {
 			content += "module.exports = {";
 		} else {
 			content += '{';
@@ -20,13 +23,13 @@ export class ConfigFileGenerator {
 		
 		content += "\n";
 		
-		content += "\tinputFile: \"" + config.inputFile + "\",\n" +
-			"\tsourceLanguage: \"" + parsedConfig.sourceLanguage + "\",\n" +
-			"\ttargetLanguages: [\"" + parsedConfig.targetLanguages.join("\", \"") + "\"],\n" +
-			"\toutputOptions: {\n" +
-			"\t\tdir: \"" + parsedConfig.outputOptions.dir + "\",\n" +
-			"\t\tmultipleFiles: " + parsedConfig.outputOptions.multipleFiles + ",\n" +
-			"\t\tfileOptions: "
+		content += "\t" + (!isJs ? "\"" : '') + "inputFile" + (!isJs ? "\"" : '') + ": \"" + config.inputFile + "\",\n" +
+			"\t" + (!isJs ? "\"" : '') + "sourceLanguage" + (!isJs ? "\"" : '') + ": \"" + parsedConfig.sourceLanguage + "\",\n" +
+			"\t" + (!isJs ? "\"" : '') + "targetLanguages" + (!isJs ? "\"" : '') + ": [\"" + parsedConfig.targetLanguages.join("\", \"") + "\"],\n" +
+			"\t" + (!isJs ? "\"" : '') + "outputOptions" + (!isJs ? "\"" : '') + ": {\n" +
+			"\t\t" + (!isJs ? "\"" : '') + "dir" + (!isJs ? "\"" : '') + ": \"" + parsedConfig.outputOptions.dir + "\",\n" +
+			"\t\t" + (!isJs ? "\"" : '') + "multipleFiles" + (!isJs ? "\"" : '') + ": " + parsedConfig.outputOptions.multipleFiles + ",\n" +
+			"\t\t" + (!isJs ? "\"" : '') + "fileOptions" + (!isJs ? "\"" : '') + ": "
 		;
 		
 		if (Array.isArray(parsedConfig.outputOptions.fileOptions)) {
@@ -34,11 +37,17 @@ export class ConfigFileGenerator {
 			
 			let i = 0;
 			for (const object of parsedConfig.outputOptions.fileOptions) {
+				if (i == 1) {
+					content += ",\n";
+				} else if (i == 0) {
+					i++;
+				}
+				
 				content += "\t\t\t{ ";
 				
 				let j = 0;
 				for (const [key, value] of Object.entries(object)) {
-					content += key + ": \"" + value + "\"";
+					content += (!isJs ? "\"" : '') + key + (!isJs ? "\"" : '') + ": \"" + value + "\"";
 					if (j == 0) {
 						content += ", ";
 						j++;
@@ -46,42 +55,39 @@ export class ConfigFileGenerator {
 				}
 				
 				content += " }";
-				
-				if (i == 0) {
-					content += ",\n";
-					i++;
-				}
 			}
 			
 			content += "\n\t\t],\n";
 		} else {
 			content += "{ ";
 			for (const [key, value] of Object.entries(parsedConfig.outputOptions.fileOptions)) {
-				content += key + ": \"" + value + "\"";
+				content += (!isJs ? "\"" : '') + key + (!isJs ? "\"" : '') + ": \"" + value + "\"";
 			}
 			content += " },\n"
 		}
 		
-		content += "\t\ttranslationAPI: ";
+		content += "\t\t" + (!isJs ? "\"" : '') + "translationAPI" + (!isJs ? "\"" : '') + ": ";
 		
 		content += "{ ";
 		
 		let i = 0;
 		for (const [key, value] of Object.entries(parsedConfig.outputOptions.translationAPI)) {
-			content += key + ": \"" + value + "\"";
+			content += (!isJs ? "\"" : '') + key + (!isJs ? "\"" : '') + ": \"" + value + "\"";
 			if (i == 0) {
 				content += ", ";
 				i++
 			}
 		}
 		
+		console.log("fef", config?.outputOptions?.keysNotToBeTranslated)
+		
 		content += " },\n" +
-			"\t\tforceTranslation: " + parsedConfig.outputOptions.forceTranslation + ",\n" +
-			"\t\tkeysNotToBeTranslated: " + (config?.outputOptions?.hasOwnProperty("keysNotToBeTranslated") ? config.outputOptions?.keysNotToBeTranslated : "[]") + "\n" +
+			"\t\t" + (!isJs ? "\"" : '') + "forceTranslation" + (!isJs ? "\"" : '') + ": " + parsedConfig.outputOptions.forceTranslation + ",\n" +
+			"\t\t" + (!isJs ? "\"" : '') + "keysNotToBeTranslated" + (!isJs ? "\"" : '') + ": " + (config?.outputOptions?.hasOwnProperty("keysNotToBeTranslated") ? JSON.stringify(config.outputOptions?.keysNotToBeTranslated) : "[]") + "\n" +
 			"\t}"
 		;
 		
-		content += "\n};";
+		content += "\n}";
 		
 		fse.outputFile(path.resolve(command.saveConfig), content)
 		.then(() => {

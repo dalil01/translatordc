@@ -13,7 +13,7 @@ export class Runner {
 	private outputFileGenerator: OutputFileGenerator = new OutputFileGenerator();
 
 	public run(command: CommandType): void {
-		console.log(command);
+		//console.log(command);
 		
 		const parsedCommand = this.commandParser.parse(command);
 		if (!parsedCommand) {

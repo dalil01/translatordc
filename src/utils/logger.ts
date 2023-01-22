@@ -33,7 +33,7 @@ export class Logger {
 				logMessage = clc.blue(`[${LoggerType.INFO}] ` + message);
 				break;
 			case LoggerType.WARNING:
-				logMessage = clc.orange(`[${LoggerType.WARNING}] ` + message);
+				logMessage = clc.yellow(`[${LoggerType.WARNING}] ` + message);
 				break;
 			case LoggerType.ERROR:
 				logMessage = clc.red(`[${LoggerType.ERROR}] ` + message);

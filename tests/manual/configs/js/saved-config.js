@@ -1,13 +1,16 @@
 module.exports = {
 	inputFile: "../../inputs/input1.ts",
 	sourceLanguage: "fr",
-	targetLanguages: ["en", "es", "ps"],
+	targetLanguages: ["en"],
 	outputOptions: {
-		dir: "../../outputs/",
+		dir: "./",
 		multipleFiles: true,
-		fileOptions: { name: "myfile.json" },
+		fileOptions: [
+			{ lang: "fr", name: "fr.output.ts" },
+
+		],
 		translationAPI: { name: "FREE_GOOGLE_TRANSLATE", apiKey: "" },
 		forceTranslation: true,
-		keysNotToBeTranslated: []
+		keysNotToBeTranslated: ["key3"]
 	}
-};
+}
