@@ -3,22 +3,6 @@
   "version": "0.1.0",
   "private": false,
   "description": "Translation generation tool for web applications.",
-  "main": "./dist/src/main.js",
-  "types": "./dist/src/main.d.ts",
-  "bin": {
-    "translatordc": "bin/translatordc"
-  },
-  "files": ["bin/translatordc", "dist/**/*"],
-  "prepublish": "build",
-  "scripts": {
-    "build": "npx tsc",
-    "start": "npx ts-node src/main.ts",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dalil01/translatordc.git"
-  },
   "keywords": [
     "translation",
     "translator",
@@ -26,10 +10,26 @@
   ],
   "author": "Dalil CHABLIS",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalil01/translatordc.git"
+  },
   "bugs": {
     "url": "https://github.com/dalil01/translatordc/issues"
   },
   "homepage": "https://github.com/dalil01/translatordc#readme",
+  "files": ["bin/translatordc", "dist/**/*"],
+  "main": "./dist/src/main.js",
+  "types": "./dist/src/main.d.ts",
+  "bin": {
+    "translatordc": "bin/translatordc"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npx ts-node src/main.ts",
+    "test": "jest"
+  },
+  "prepublish": "build",
   "dependencies": {
     "cli-color": "^2.0.3",
     "commander": "^9.4.1",
