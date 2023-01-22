@@ -28,9 +28,10 @@ export class OutputFileGenerator {
 		//console.log(this.languageByValueByKey);
 		
 		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
-			//console.log(this.languageByValueByKey);
+			console.log(languagesByFilename);
 			
-			for (const [filename, languages] of languagesByFilename) {
+			for (let [filename, languages] of languagesByFilename) {
+				//languages = languages.map((language) => language.replaceAll('-', ''));
 				
 				const isJSON = filename.endsWith(OutputFileExtensions.JSON);
 				
@@ -65,7 +66,7 @@ export class OutputFileGenerator {
 						content += "{\n";
 						
 						for (let j = 0; j < languages.length; j++) {
-							content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j) + (isJSON ? "\"" : '') + ": \"";
+							content += "\t".repeat(2) + (isJSON ? "\"" : '') + languages.at(j)?.replaceAll('-', '') + (isJSON ? "\"" : '') + ": \"";
 							
 							// @ts-ignore
 							const valueByLanguage = this.languageByValueByKey.get(key);

@@ -1,14 +1,23 @@
 export const translated = {
 	key1: {
-		es: "Buenos dias",
-		ps: "سلام"
+		fr: "Bonjour !",
+		en: "Good morning !",
+		es: "Buenos dias !",
+		nl: "Hallo !",
+		zhCN: "早上好 ！"
 	},
 	key2: {
-		es: "Poner al día",
-		ps: "د تازه کولو لپاره"
+		fr: "Très bien",
+		en: "Very well",
+		es: "Muy bien",
+		nl: "Erg goed",
+		zhCN: "很好"
 	},
 	key3: {
-		es: "Estoy aquí",
-		ps: "زه دلته یم"
+		fr: "Super",
+		en: "Great",
+		es: "Gran",
+		nl: "Fantastisch",
+		zhCN: "伟大的"
 	}
 }
