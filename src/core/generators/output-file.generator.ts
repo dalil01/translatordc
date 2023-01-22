@@ -38,7 +38,10 @@ export class OutputFileGenerator {
 				let content = '';
 				
 				if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
-					content += "export const " + filename.split('/').at(-1)?.split('.').at(0) + " = {";
+					const constNameSplit = filename.split('/').at(-1)?.replaceAll('-', '')?.split('.');
+					constNameSplit?.pop();
+					
+					content += "export const " + constNameSplit?.join('') + " = {";
 				} else if (isJSON) {
 					content += '{';
 				}

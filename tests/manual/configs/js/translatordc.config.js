@@ -8,7 +8,7 @@ module.exports = {
     outputOptions: {
         dir: "../../outputs",
         multipleFiles: false,
-        fileOptions: { name: "translated.ts" },
+        fileOptions: { name: "ENTranslated.ts" },
         translationAPI: {
             name: TranslationAPI.FREE_GOOGLE_TRANSLATE,
             apiKey: ''
