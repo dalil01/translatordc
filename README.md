@@ -39,7 +39,7 @@ Options:
   -tan, --translation-api <value>               Translation API
   -tak, --translation-api-key <value>           Translation API Key
   -ft, --force-translation                      Force translation
-  -kt, --keys-not-to-be-translated <value>      Specify the translation keys not to be translated (Ex: key1:(fr,en)|key2:es|key3:sp,en)
+  -kt, --keys-not-to-be-translated <value>      Specify the translation keys not to be translated (Ex: key1|key2:(en,fr)|key3:sp)
   -sc, --save-config <value>                    Saving the command line configuration in a file
   -h, --help                                    Display help
 ```

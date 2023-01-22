@@ -45,7 +45,7 @@ export class CLI {
 			.option("-tan, --translation-api <value>", "Translation API")
 			.option("-tak, --translation-api-key <value>", "Translation API Key")
 			.option("-ft, --force-translation", "Force translation")
-			.option("-kt, --keys-not-to-be-translated <value>", "Specify the translation keys not to be translated (Ex: key1:(fr,en)|key2:es|key3:sp,en)")
+			.option("-kt, --keys-not-to-be-translated <value>", "Specify the translation keys not to be translated (Ex: key1|key2:(en,fr)|key3:sp)")
 			.option("-sc, --save-config <value>", "Saving the command line configuration in a file")
 			.option("-h, --help",  "Display help")
 			.parse(process.argv)
