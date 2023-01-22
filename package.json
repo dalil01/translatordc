@@ -1,12 +1,14 @@
 {
   "name": "translatordc",
   "version": "0.1.0",
+  "private": false,
   "description": "Translation generation tool for web applications.",
-  "main": "./dist/main.js",
-  "types": "./dist/main.d.ts",
+  "main": "./dist/src/main.js",
+  "types": "./dist/src/main.d.ts",
   "bin": {
     "translatordc": "bin/translatordc"
   },
+  "files": ["dist/**/*"],
   "scripts": {
     "build": "npx tsc",
     "start": "npx ts-node src/main.ts",
