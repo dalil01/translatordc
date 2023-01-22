@@ -87,4 +87,4 @@ PRs are always welcome. If you need help questions, want to bounce ideas, contac
 
 ## License
 
-translatordc &copy; 2022 - Dalil CHABLIS - Released under the [MIT license](https://github.com/tancredi/translatordc/blob/master/LICENSE)
+translatordc &copy; 2023 - Dalil CHABLIS - Released under the [MIT license](https://github.com/tancredi/translatordc/blob/master/LICENSE)
