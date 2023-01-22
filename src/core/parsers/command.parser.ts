@@ -92,7 +92,7 @@ export class CommandParser {
 			parsedCommand.outputOptions = outputOptions;
 		}
 		
-		console.log(parsedCommand);
+		//console.log(parsedCommand);
 		
 		return { config: parsedCommand };
 	}

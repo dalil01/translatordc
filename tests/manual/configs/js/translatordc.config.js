@@ -4,7 +4,7 @@ const {TranslationAPI} = require("../../../../src/core/constants/translation-api
 module.exports = {
     inputFile: "../../inputs/input1.ts",
     sourceLanguage: Language.French,
-    targetLanguages: [Language.English, 'es', Language.Pashto],
+    targetLanguages: [],
     outputOptions: {
         dir: "../../outputs",
         multipleFiles: true,
