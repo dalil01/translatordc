@@ -11,6 +11,8 @@ import { Translator } from "../translators/translator";
 export class OutputFileGenerator {
 	
 	private languageByValueByKey: Map<string, Map<string, string>> = new Map();
+	
+	private keysWithEmptySourceLanguageValue: string[] = [];
 	private notTranslatedLanguageByValueByKey: Map<string, Map<string, string>> = new Map();
 	
 	private translator: Translator = new Translator();
@@ -26,6 +28,14 @@ export class OutputFileGenerator {
 		
 		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
 		//console.log(this.languageByValueByKey);
+		
+		for (const [key, languageByValue] of this.languageByValueByKey) {
+			for (const [language, value] of languageByValue) {
+				if (language == config.sourceLanguage && value.length == 0) {
+					this.keysWithEmptySourceLanguageValue.push(key);
+				}
+			}
+		}
 		
 		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
 			//console.log(languagesByFilename);
@@ -115,6 +125,19 @@ export class OutputFileGenerator {
 				generatedFiles.add(filename);
 			}
 			
+			if (this.keysWithEmptySourceLanguageValue.length > 0) {
+				let msg = "Missing value for the source language (" + config.sourceLanguage + ") of the following key(s): \n";
+				
+				for (let i = 0; i < this.keysWithEmptySourceLanguageValue.length; i++) {
+					msg += "\t  • " + this.keysWithEmptySourceLanguageValue[i];
+					if (i < this.keysWithEmptySourceLanguageValue.length - 1) {
+						msg += "\n";
+					}
+				}
+				
+				Logger.warning(msg);
+			}
+			
 			if (this.notTranslatedLanguageByValueByKey.size > 0) {
 				Logger.warning("Please note that one or more keys have not been translated because the translation values do not match the current values.\n" +
 					"It is possible that your language options have changed or that you have changed some things.\n" +
@@ -171,6 +194,10 @@ export class OutputFileGenerator {
 		for (const [key, valueByLanguage] of this.languageByValueByKey) {
 			const baseValue = (valueByLanguage.get(sourceLanguage) || '').trim();
 			if (baseValue.length == 0) {
+				for (const [language,] of valueByLanguage) {
+					valueByLanguage.set(language, '');
+				}
+				
 				continue;
 			}
 			

@@ -7,17 +7,17 @@ export const translated = {
 		zhCN: "早上好 ！"
 	},
 	key2: {
-		fr: "Connexion",
-		en: "Login",
-		es: "Acceso",
-		nl: "Verbinding",
-		zhCN: "登录"
+		fr: "D'accord",
+		en: "OK",
+		es: "Correcto",
+		nl: "Oké",
+		zhCN: "好的"
 	},
 	key3: {
-		fr: "Mon compte",
-		en: "My account",
-		es: "Mi cuenta",
-		nl: "mijn account",
-		zhCN: "我的账户"
+		fr: "",
+		en: "",
+		es: "",
+		nl: "",
+		zhCN: ""
 	}
 }
