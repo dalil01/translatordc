@@ -28,7 +28,7 @@ export class OutputFileGenerator {
 		//console.log(this.languageByValueByKey);
 		
 		this.applyTranslations(config.sourceLanguage, outputOptions).then(() => {
-			console.log(languagesByFilename);
+			//console.log(languagesByFilename);
 			
 			for (let [filename, languages] of languagesByFilename) {
 				//languages = languages.map((language) => language.replaceAll('-', ''));
