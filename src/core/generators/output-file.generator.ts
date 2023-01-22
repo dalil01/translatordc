@@ -38,10 +38,22 @@ export class OutputFileGenerator {
 				let content = '';
 				
 				if (filename.endsWith(OutputFileExtensions.TS) || filename.endsWith(OutputFileExtensions.JS)) {
-					const constNameSplit = filename.split('/').at(-1)?.replaceAll('-', '')?.split('.');
-					constNameSplit?.pop();
+					let constNameSplit = filename.split('/').at(-1)?.split('.');
+					let constName = '';
 					
-					content += "export const " + constNameSplit?.join('') + " = {";
+					if (constNameSplit) {
+						constNameSplit.pop();
+						constNameSplit = constNameSplit.join('.').split(/[._-]+/);
+						
+						let tempName = constNameSplit[0];
+						for (let i = 1; i < constNameSplit.length; i++) {
+							tempName += constNameSplit[i].charAt(0).toUpperCase() + constNameSplit[i].slice(1).toLowerCase();
+						}
+						
+						constName = tempName;
+					}
+					
+					content += "export const " + constName + " = {";
 				} else if (isJSON) {
 					content += '{';
 				}
