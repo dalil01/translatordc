@@ -26,7 +26,7 @@ export class OutputFileGenerator {
 		
 		const generatedFiles: Set<string> = new Set();
 		
-		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir);
+		this.autoSetLanguageByValueByKey(languagesByFilename, outputOptions.dir, config.translationKeys);
 		//console.log(this.languageByValueByKey);
 		
 		for (const [key, languageByValue] of this.languageByValueByKey) {
@@ -139,9 +139,21 @@ export class OutputFileGenerator {
 			}
 			
 			if (this.notTranslatedLanguageByValueByKey.size > 0) {
-				Logger.warning("Please note that one or more keys have not been translated because the translation values do not match the current values.\n" +
-					"It is possible that your language options have changed or that you have changed some things.\n" +
-					"However, the -ft option allows you to force the translation.");
+				let msg = "Please note that the following key(s) have not been translated because the translation values do not match the current values:\n";
+
+				let i = 0;
+				for (const [key, languageByValue] of this.notTranslatedLanguageByValueByKey) {
+					msg += "   • " + key + " (" + Array.from(languageByValue.keys()).join(", ") + ')';
+					if (i < this.notTranslatedLanguageByValueByKey.size - 1) {
+						msg += "\n";
+					}
+					i++;
+				}
+
+				msg += "\nIt is possible that your language options have changed or that you have changed some things.";
+				msg += "\nHowever, the -ft option allows you to force the translation.";
+
+				Logger.warning(msg);
 			}
 		});
 	}
@@ -217,7 +229,7 @@ export class OutputFileGenerator {
 		}
 	}
 	
-	private autoSetLanguageByValueByKey(languagesByFilename: Map<string, string[]>, dir: string): void {
+	private autoSetLanguageByValueByKey(languagesByFilename: Map<string, string[]>, dir: string, translationKeys: string[]): void {
 		for (const [filename, languages] of languagesByFilename) {
 			const currentOutputPath = path.resolve(dir + filename);
 			const isJSON = filename.toLowerCase().endsWith(OutputFileExtensions.JSON);
@@ -245,7 +257,7 @@ export class OutputFileGenerator {
 					for (const [, v] of map) {
 						// @ts-ignore
 						const vEntries = Object.entries(v);
-						
+
 						if (languages.length == 1) {
 							for (const [key, value] of vEntries) {
 								if (typeof value == "object") {
@@ -260,6 +272,12 @@ export class OutputFileGenerator {
 							// @ts-ignore
 							this.mergeLanguageByValueByKey(new Map(vEntries), languages);
 						}
+					}
+				}
+			} else if (languages.length > 0) {
+				for (const key of translationKeys) {
+					for (const language of languages) {
+						this.fillLanguageByValueByKey(key, language, '');
 					}
 				}
 			}

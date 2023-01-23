@@ -16,7 +16,7 @@ By default, it uses the Google Translation API, but it is also possible to confi
 ### Install
 
 ```bash
-npm install translatordc
+npm install -g translatordc
 ```
 
 ## Usage
