@@ -18,7 +18,10 @@
     "url": "https://github.com/dalil01/translatordc/issues"
   },
   "homepage": "https://github.com/dalil01/translatordc#readme",
-  "files": ["bin/translatordc", "dist/**/*"],
+  "files": [
+    "bin/translatordc",
+    "dist/**/*"
+  ],
   "main": "./dist/src/main.js",
   "types": "./dist/src/main.d.ts",
   "bin": {
@@ -38,6 +41,7 @@
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
     "google-translate-api-browser": "^3.0.0",
+    "handlebars": "^4.7.7",
     "path": "^0.12.7"
   },
   "devDependencies": {

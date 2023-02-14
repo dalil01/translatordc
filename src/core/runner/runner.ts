@@ -26,11 +26,10 @@ export class Runner {
 		}
 		
 		if (command.saveConfig) {
-			this.configFileGenerator.generate(command, parsedCommand.config, parsedConfig);
+			this.configFileGenerator.generate(command, parsedConfig);
 		}
 
 		this.outputFileGenerator.generate(parsedConfig);
 	}
-	
 	
 }

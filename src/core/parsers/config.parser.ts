@@ -7,6 +7,7 @@ import {Language} from "../constants/language";
 import {OutputFileExtensions} from "../constants/output-file-extensions";
 import {ParsedOutputOptionsType} from "../types/parsed-output-options.type";
 import {DefaultConfig} from "../constants/default-config";
+import { OutputOptionsType } from "../types/output-options.type";
 
 export class ConfigParser {
 
@@ -21,7 +22,7 @@ export class ConfigParser {
 			Logger.error("The content of your translation keys file is not in expected format.");
 			return null;
 		}
-		
+
 		if (translationKeys.length === 0) {
 			return null;
 		}
@@ -37,10 +38,6 @@ export class ConfigParser {
 		}
 
 		if (config.targetLanguages.length === 0) {
-			return null;
-		}
-
-		if (!config.outputOptions) {
 			return null;
 		}
 
@@ -61,14 +58,14 @@ export class ConfigParser {
 	}
 
 	private parseOutputOptions(config: ConfigType, languages: string[]): ParsedOutputOptionsType | null {
-		if (!config.outputOptions) {
-			return null;
-		}
-
-		const outputOptions = config.outputOptions;
+		const outputOptions = config.outputOptions || {};
 
 		const defaultFilename = DefaultConfig.outputOptions.name + '.' + config.inputFile.split('.').at(-1);
 		let fileOptions: any = { name: defaultFilename };
+
+		if (!outputOptions.hasOwnProperty("fileOptions")) {
+			outputOptions.fileOptions = fileOptions;
+		}
 
 		const invalidFileOptionsMsg = "Invalid output file options."
 		if (typeof outputOptions.fileOptions != "object") {
@@ -76,31 +73,29 @@ export class ConfigParser {
 			return null;
 		}
 
-		if (outputOptions.hasOwnProperty("fileOptions")) {
-			let validFile = true;
+		let validFile = true;
 
-			if (!outputOptions.fileOptions || (!Array.isArray(outputOptions.fileOptions) && !this.isValidOutputFile(outputOptions.fileOptions.name))) {
-				validFile = false;
-			} else if (Array.isArray(outputOptions.fileOptions)) {
-				for (let i = 0; i < outputOptions.fileOptions.length; i++) {
-					const obj = outputOptions.fileOptions[0];
-					if (!obj.lang || !obj.name || !this.isValidLanguages([obj.lang]) || !this.isValidOutputFile(obj.name) || ![config.sourceLanguage, ...config.targetLanguages].includes(obj.lang)) {
-						validFile = false;
-						break;
-					}
+		if (!outputOptions.fileOptions || (!Array.isArray(outputOptions.fileOptions) && !this.isValidOutputFile(outputOptions.fileOptions.name))) {
+			validFile = false;
+		} else if (Array.isArray(outputOptions.fileOptions)) {
+			for (let i = 0; i < outputOptions.fileOptions.length; i++) {
+				const obj = outputOptions.fileOptions[0];
+				if (!obj.lang || !obj.name || !this.isValidLanguages([obj.lang]) || !this.isValidOutputFile(obj.name) || ![config.sourceLanguage, ...config.targetLanguages].includes(obj.lang)) {
+					validFile = false;
+					break;
 				}
-			}
-
-			if (!validFile) {
-				Logger.error(invalidFileOptionsMsg);
-				return null;
-			} else {
-				fileOptions = outputOptions.fileOptions;
 			}
 		}
 
+		if (!validFile) {
+			Logger.error(invalidFileOptionsMsg);
+			return null;
+		} else {
+			fileOptions = outputOptions.fileOptions;
+		}
+
 		let dir;
-		if (outputOptions.hasOwnProperty("fileOptions")) {
+		if (outputOptions.hasOwnProperty("dir")) {
 			dir = outputOptions.dir + (outputOptions.dir?.at(-1) != '/' ? '/' : '');
 		} else {
 			if (config.inputFile.includes('/')) {

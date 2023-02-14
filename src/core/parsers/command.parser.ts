@@ -9,13 +9,9 @@ import { ConfigType } from "../types/config.type";
 export class CommandParser {
 	
 	public parse(command: CommandType): ParsedCommandType | null {
-		let existedConfigFile = this.findExistedConfigFile(command);
-		
-		if (!existedConfigFile) {
-			Logger.error("Configuration file not found.");
-			return null;
-		}
-		
+		// @ts-ignore
+		let parsedCommand: ConfigType = command;
+
 		if (command.hasOwnProperty("saveConfig")) {
 			const file = command.saveConfig;
 			
@@ -30,10 +26,17 @@ export class CommandParser {
 				Logger.error("Invalid config file extension (required: \"" + DefaultConfig.defaultFileExtensions.join("\", \"") + "\").");
 				return null;
 			}
+		} else {
+			let existedConfigFile = this.findExistedConfigFile(command);
+
+			if (!existedConfigFile) {
+				Logger.error("Configuration file not found.");
+				return null;
+			}
+
+			parsedCommand = { ...require(existedConfigFile), ...command }
 		}
-		
-		const parsedCommand: ConfigType = { ...require(existedConfigFile), ...command }
-		
+
 		if (command.hasOwnProperty("targetLanguages")) {
 			parsedCommand.targetLanguages = command.targetLanguages.replaceAll(' ', '').split(',');
 		}

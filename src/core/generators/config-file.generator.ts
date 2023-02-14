@@ -4,23 +4,26 @@ import { Logger } from "../../utils/logger";
 import * as path from "path";
 import { CommandType } from "../types/command.type";
 import { ParsedConfigType } from "../types/parsed-config.type";
+import * as fs from "fs";
+import * as handlebars from "handlebars";
 
 export class ConfigFileGenerator {
-	
+
 	// TODO : refactor
-	
-	public generate(command: CommandType, config: ConfigType, parsedConfig: ParsedConfigType): void {
-		//console.log(config);
-		
+
+	public generate(command: CommandType, parsedConfig: ParsedConfigType): void {
+		console.log(parsedConfig);
+
 		let content = "";
-		
+
 		const isJs = command.saveConfig.endsWith(".js");
 		if (isJs) {
 			content += "module.exports = {";
 		} else {
 			content += '{';
 		}
-		
+
+		/*
 		content += "\n";
 		
 		content += "\t" + (!isJs ? "\"" : '') + "inputFile" + (!isJs ? "\"" : '') + ": \"" + config.inputFile + "\",\n" +
@@ -88,14 +91,34 @@ export class ConfigFileGenerator {
 		;
 		
 		content += "\n}";
-		
+
+		 */
+
+		const templatesPath = "src/core/generators/templates/configs/";
+
+		let configTemplate = handlebars.compile(
+			fs.readFileSync(path.resolve(templatesPath + "config." + ((isJs) ? "js" : "json") + ".hbs"), "utf8")
+		);
+
+		const configTemplateData = {
+			inputFile: parsedConfig.inputFile,
+			sourceLanguage: parsedConfig.sourceLanguage,
+			targetLanguages: [parsedConfig.targetLanguages.join("\", \"")],
+			outputOptions: parsedConfig.outputOptions
+		};
+
+		console.log(configTemplate(configTemplateData));
+
+		/*
 		fse.outputFile(path.resolve(command.saveConfig), content)
-		.then(() => {
-			Logger.success("Generated parsedConfig file: " + command.saveConfig);
-		})
-		.catch(err => {
-			Logger.error(err);
-		});
+			.then(() => {
+				Logger.success("Generated parsedConfig file: " + command.saveConfig);
+			})
+			.catch(err => {
+				Logger.error(err);
+			});
+
+		 */
 	}
-	
+
 }

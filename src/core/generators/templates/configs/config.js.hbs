@@ -1,0 +1,10 @@
+module.exports = {
+    inputFile: "{{ inputFile }}",
+    sourceLanguage: "{{ sourceLanguage }}",
+    targetLanguages: [{{#each targetLanguages}}"{{ this }}"{{/each}}],
+    outputOptions: {
+        dir: "{{ outputOptions.dir }}",
+        multipleFiles: {{ outputOptions.multipleFiles }},
+        fileOptions: {{ outputOptions.fileOptions }}
+    }
+}
