@@ -1,10 +1,16 @@
 module.exports = {
     inputFile: "{{ inputFile }}",
     sourceLanguage: "{{ sourceLanguage }}",
-    targetLanguages: [{{#each targetLanguages}}"{{ this }}"{{/each}}],
+    targetLanguages: [{{#each targetLanguages}}"{{ this }}"{{#unless @last}}, {{/unless}}{{/each}}],
     outputOptions: {
         dir: "{{ outputOptions.dir }}",
         multipleFiles: {{ outputOptions.multipleFiles }},
-        fileOptions: {{ outputOptions.fileOptions }}
+        fileOptions: {{#if outputOptions.fileOptionsIsArray }}[{{#each outputOptions.fileOptions }} { lang: "{{ this.lang }}", name: "{{ this.name }}" }{{#unless @last}}, {{/unless}}{{/each}} ]{{ else }}{ name: "{{ outputOptions.fileOptions.name }}" }{{/if}},
+        translationAPI: {
+            name: "{{ outputOptions.translationAPI.name }}",
+            apiKey: "{{ outputOptions.translationAPI.apiKey }}"
+        },
+        forceTranslation: {{ outputOptions.forceTranslation }},
+        keysNotToBeTranslated: [{{#each outputOptions.keysNotToBeTranslated}}"{{ this }}"{{#unless @last}}, {{/unless}}{{/each}}]
     }
 }

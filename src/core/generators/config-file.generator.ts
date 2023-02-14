@@ -100,25 +100,31 @@ export class ConfigFileGenerator {
 			fs.readFileSync(path.resolve(templatesPath + "config." + ((isJs) ? "js" : "json") + ".hbs"), "utf8")
 		);
 
+		const outputOptions = parsedConfig.outputOptions;
+
 		const configTemplateData = {
 			inputFile: parsedConfig.inputFile,
 			sourceLanguage: parsedConfig.sourceLanguage,
-			targetLanguages: [parsedConfig.targetLanguages.join("\", \"")],
-			outputOptions: parsedConfig.outputOptions
+			targetLanguages: parsedConfig.targetLanguages,
+			outputOptions: {
+				dir: outputOptions.dir,
+				multipleFiles: outputOptions.multipleFiles,
+				defaultFilename: outputOptions.defaultFilename,
+				fileOptionsIsArray: Array.isArray(outputOptions.fileOptions),
+				fileOptions: outputOptions.fileOptions,
+				translationAPI: outputOptions.translationAPI,
+				forceTranslation: outputOptions.forceTranslation,
+				keysNotToBeTranslated: outputOptions.keysNotToBeTranslated
+			}
 		};
 
-		console.log(configTemplate(configTemplateData));
-
-		/*
-		fse.outputFile(path.resolve(command.saveConfig), content)
+		fse.outputFile(path.resolve(command.saveConfig), configTemplate(configTemplateData))
 			.then(() => {
 				Logger.success("Generated parsedConfig file: " + command.saveConfig);
 			})
 			.catch(err => {
 				Logger.error(err);
 			});
-
-		 */
 	}
 
 }
