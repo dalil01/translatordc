@@ -40,7 +40,7 @@
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
-    "google-translate-api-browser": "^3.0.0",
+    "google-translate-api-browser": "^4.1.0",
     "handlebars": "^4.7.7",
     "path": "^0.12.7"
   },
